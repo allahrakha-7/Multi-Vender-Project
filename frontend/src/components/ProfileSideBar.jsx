@@ -1,16 +1,11 @@
 import { AiOutlineLogin, AiOutlineMessage } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { HiOutlineReceiptRefund, HiOutlineShoppingBag } from "react-icons/hi";
-import {
-  MdOutlineAdminPanelSettings,
-  MdOutlinePassword,
-  MdOutlineTrackChanges,
-} from "react-icons/md";
+import { MdOutlineAdminPanelSettings, MdOutlinePassword, MdOutlineTrackChanges } from "react-icons/md";
 import { TbAddressBook } from "react-icons/tb";
 import { RxPerson } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
@@ -19,7 +14,7 @@ const ProfileSidebar = ({ setActive, active }) => {
  const {user} = useSelector((state) => state.user);
   const logoutHandler = () => {
     axios
-      .get(`${server}/user/logout`, { withCredentials: true })
+      .get(`/user/logout`, { withCredentials: true })
       .then((res) => {
         toast.success(res.data.message);
         window.location.reload(true);

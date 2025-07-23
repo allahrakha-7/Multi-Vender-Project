@@ -1,7 +1,7 @@
 import useEffect from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getAllOrdersOfUser } from "../../redux/actions/order";
+import { getAllOrdersOfUser } from "../redux/actions/order";
 
 const TrackOrder = () => {
   const { orders } = useSelector((state) => state.order);

@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfShop } from "../../redux/actions/order";
-import styles from "../../styles/styles";
 import { RxCross1 } from "react-icons/rx";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { loadSeller } from "../../redux/actions/user";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -44,7 +42,7 @@ const WithdrawMoney = () => {
 
     await axios
       .put(
-        `${server}/shop/update-payment-methods`,
+        `/shop/update-payment-methods`,
         {
           withdrawMethod,
         },
@@ -70,7 +68,7 @@ const WithdrawMoney = () => {
 
   const deleteHandler = async () => {
     await axios
-      .delete(`${server}/shop/delete-withdraw-method`, {
+      .delete(`/shop/delete-withdraw-method`, {
         withCredentials: true,
       })
       // eslint-disable-next-line no-unused-vars
@@ -91,7 +89,7 @@ const WithdrawMoney = () => {
       const amount = withdrawAmount;
       await axios
         .post(
-          `${server}/withdraw/create-withdraw-request`,
+          `/withdraw/create-withdraw-request`,
           { amount },
           { withCredentials: true }
         )
@@ -111,7 +109,7 @@ const WithdrawMoney = () => {
           Available Balance: ${availableBalance}
         </h5>
         <div
-          className={`${styles.button} text-white !h-[42px] !rounded`}
+          className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white !h-[42px] !rounded'
           onClick={() => (availableBalance < 50 ? error() : setOpen(true))}
         >
           Withdraw
@@ -151,7 +149,7 @@ const WithdrawMoney = () => {
                       }
                       id=""
                       placeholder="Enter your Bank name!"
-                      className={`${styles.input} mt-2`}
+                      className="w-full border p-1 rounded-[5px] mt-2"
                     />
                   </div>
                   <div className="pt-2">
@@ -171,7 +169,7 @@ const WithdrawMoney = () => {
                       id=""
                       required
                       placeholder="Enter your bank Country!"
-                      className={`${styles.input} mt-2`}
+                      className="w-full border p-1 rounded-[5px] mt-2"
                     />
                   </div>
                   <div className="pt-2">
@@ -191,7 +189,7 @@ const WithdrawMoney = () => {
                         })
                       }
                       placeholder="Enter your Bank Swift Code!"
-                      className={`${styles.input} mt-2`}
+                      className="w-full border p-1 rounded-[5px] mt-2"
                     />
                   </div>
 
@@ -213,7 +211,7 @@ const WithdrawMoney = () => {
                       }
                       required
                       placeholder="Enter your bank account number!"
-                      className={`${styles.input} mt-2`}
+                      className="w-full border p-1 rounded-[5px] mt-2"
                     />
                   </div>
                   <div className="pt-2">
@@ -233,7 +231,7 @@ const WithdrawMoney = () => {
                       }
                       id=""
                       placeholder="Enter your bank Holder name!"
-                      className={`${styles.input} mt-2`}
+                      className="w-full border p-1 rounded-[5px] mt-2"
                     />
                   </div>
 
@@ -254,13 +252,13 @@ const WithdrawMoney = () => {
                         })
                       }
                       placeholder="Enter your bank address!"
-                      className={`${styles.input} mt-2`}
+                      className="w-full border p-1 rounded-[5px] mt-2"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className={`${styles.button} mb-3 text-white`}
+                    className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer mb-3 text-white'
                   >
                     Add
                   </button>
@@ -305,7 +303,7 @@ const WithdrawMoney = () => {
                         className="800px:w-[100px] w-[full] border 800px:mr-3 p-1 rounded"
                       />
                       <div
-                        className={`${styles.button} !h-[42px] text-white`}
+                        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer !h-[42px] text-white'
                         onClick={withdrawHandler}
                       >
                         Withdraw
@@ -319,7 +317,7 @@ const WithdrawMoney = () => {
                     </p>
                     <div className="w-full flex items-center">
                       <div
-                        className={`${styles.button} text-[#fff] text-[18px] mt-4`}
+                        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-[#fff] text-[18px] mt-4'
                         onClick={() => setPaymentMethod(true)}
                       >
                         Add new

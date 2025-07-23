@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import useEffect from "react";
 import { AiOutlineArrowRight, AiOutlineMoneyCollect } from "react-icons/ai";
-import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { MdBorderClear } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,8 +15,8 @@ const DashboardHero = () => {
   const { products } = useSelector((state) => state.products);
 
   useEffect(() => {
-     dispatch(getAllOrdersOfShop(seller._id));
-     dispatch(getAllProductsShop(seller._id));
+    dispatch(getAllOrdersOfShop(seller._id));
+    dispatch(getAllProductsShop(seller._id));
   }, [dispatch, seller._id]);
 
   const availableBalance = seller?.availableBalance.toFixed(2);
@@ -77,11 +76,11 @@ const DashboardHero = () => {
 
   orders && orders.forEach((item) => {
     row.push({
-        id: item._id,
-        itemsQty: item.cart.reduce((acc, item) => acc + item.qty, 0),
-        total: "US$ " + item.totalPrice,
-        status: item.status,
-      });
+      id: item._id,
+      itemsQty: item.cart.reduce((acc, item) => acc + item.qty, 0),
+      total: "US$ " + item.totalPrice,
+      status: item.status,
+    });
   });
   return (
     <div className="w-full p-8">
@@ -95,7 +94,7 @@ const DashboardHero = () => {
               fill="#00000085"
             />
             <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
+              className='text-[25px] font-[600] font-Roboto text-[#333] !text-[18px] leading-5 !font-[400] text-[#00000085]'
             >
               Account Balance{" "}
               <span className="text-[16px]">(with 10% service charge)</span>
@@ -111,7 +110,7 @@ const DashboardHero = () => {
           <div className="flex items-center">
             <MdBorderClear size={30} className="mr-2" fill="#00000085" />
             <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
+              className='text-[25px] font-[600] font-Roboto text-[#333] !text-[18px] leading-5 !font-[400] text-[#00000085]'
             >
               All Orders
             </h3>
@@ -130,7 +129,7 @@ const DashboardHero = () => {
               fill="#00000085"
             />
             <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
+              className='text-[25px] font-[600] font-Roboto text-[#333] !text-[18px] leading-5 !font-[400] text-[#00000085]'
             >
               All Products
             </h3>
@@ -144,13 +143,13 @@ const DashboardHero = () => {
       <br />
       <h3 className="text-[22px] font-Poppins pb-2">Latest Orders</h3>
       <div className="w-full min-h-[45vh] bg-white rounded">
-      <DataGrid
-        rows={row}
-        columns={columns}
-        pageSize={10}
-        disableSelectionOnClick
-        autoHeight
-      />
+        <DataGrid
+          rows={row}
+          columns={columns}
+          pageSize={10}
+          disableSelectionOnClick
+          autoHeight
+        />
       </div>
     </div>
   );

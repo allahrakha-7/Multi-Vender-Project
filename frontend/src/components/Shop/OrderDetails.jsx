@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import styles from "../../styles/styles";
 import { BsFillBagFill } from "react-icons/bs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfShop } from "../../redux/actions/order";
-import { server } from "../../server";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -28,7 +26,7 @@ const OrderDetails = () => {
   const orderUpdateHandler = async (e) => {
     await axios
       .put(
-        `${server}/order/update-order-status/${id}`,
+        `/order/update-order-status/${id}`,
         {
           status,
         },
@@ -48,7 +46,7 @@ const OrderDetails = () => {
   const refundOrderUpdateHandler = async (e) => {
     await axios
     .put(
-      `${server}/order/order-refund-success/${id}`,
+      `/order/order-refund-success/${id}`,
       {
         status,
       },
@@ -68,7 +66,7 @@ const OrderDetails = () => {
 
 
   return (
-    <div className={`py-4 min-h-screen ${styles.section}`}>
+    <div className="py-4 min-h-screen w-11/12 mx-auto">
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center">
           <BsFillBagFill size={30} color="crimson" />
@@ -76,7 +74,7 @@ const OrderDetails = () => {
         </div>
         <Link to="/dashboard-orders">
           <div
-            className={`${styles.button} !bg-[#fce1e6] !rounded-[4px] text-[#e94560] font-[600] !h-[45px] text-[18px]`}
+            className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer !bg-[#fce1e6] !rounded-[4px] text-[#e94560] font-[600] !h-[45px] text-[18px]'
           >
             Order List
           </div>
@@ -92,7 +90,6 @@ const OrderDetails = () => {
         </h5>
       </div>
 
-      {/* order items */}
       <br />
       <br />
       {data &&
@@ -200,7 +197,7 @@ const OrderDetails = () => {
       }
 
       <div
-        className={`${styles.button} mt-5 !bg-[#FCE1E6] !rounded-[4px] text-[#E94560] font-[600] !h-[45px] text-[18px]`}
+        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer mt-5 !bg-[#FCE1E6] !rounded-[4px] text-[#E94560] font-[600] !h-[45px] text-[18px]'
         onClick={data?.status !== "Processing refund" ? orderUpdateHandler : refundOrderUpdateHandler}
       >
         Update Status

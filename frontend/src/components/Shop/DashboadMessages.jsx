@@ -1,11 +1,9 @@
 import axios from "axios";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
-import { server } from "../../server";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
-import styles from "../../styles/styles";
 import { TfiGallery } from "react-icons/tfi";
 import socketIO from "socket.io-client";
 import { format } from "timeago.js";
@@ -47,7 +45,7 @@ const DashboardMessages = () => {
     const getConversation = async () => {
       try {
         const resonse = await axios.get(
-          `${server}/conversation/get-all-conversation-seller/${seller?._id}`,
+          `/conversation/get-all-conversation-seller/${seller?._id}`,
           {
             withCredentials: true,
           }
@@ -84,7 +82,7 @@ const DashboardMessages = () => {
     const getMessage = async () => {
       try {
         const response = await axios.get(
-          `${server}/message/get-all-messages/${currentChat?._id}`
+          `/message/get-all-messages/${currentChat?._id}`
         );
         setMessages(response.data.messages);
       } catch (error) {
@@ -117,7 +115,7 @@ const DashboardMessages = () => {
     try {
       if (newMessage !== "") {
         await axios
-          .post(`${server}/message/create-new-message`, message)
+          .post(`/message/create-new-message`, message)
           .then((res) => {
             setMessages([...messages, res.data.message]);
             updateLastMessage();
@@ -138,7 +136,7 @@ const DashboardMessages = () => {
     });
 
     await axios
-      .put(`${server}/conversation/update-last-message/${currentChat._id}`, {
+      .put(`/conversation/update-last-message/${currentChat._id}`, {
         lastMessage: newMessage,
         lastMessageId: seller._id,
       })
@@ -177,7 +175,7 @@ const DashboardMessages = () => {
 
     try {
       await axios
-        .post(`${server}/message/create-new-message`, {
+        .post(`/message/create-new-message`, {
           images: e,
           sender: seller._id,
           text: newMessage,
@@ -195,7 +193,7 @@ const DashboardMessages = () => {
 
   const updateLastMessageForImage = async () => {
     await axios.put(
-      `${server}/conversation/update-last-message/${currentChat._id}`,
+      `/conversation/update-last-message/${currentChat._id}`,
       {
         lastMessage: "Photo",
         lastMessageId: seller._id,
@@ -278,7 +276,7 @@ const MessageList = ({
 
     const getUser = async () => {
       try {
-        const res = await axios.get(`${server}/user/user-info/${userId}`);
+        const res = await axios.get(`/user/user-info/${userId}`);
         setUser(res.data.user);
       } catch (error) {
         console.log(error);
@@ -340,7 +338,6 @@ const SellerInbox = ({
 }) => {
   return (
     <div className="w-full min-h-full flex flex-col justify-between">
-      {/* message header */}
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
           <img
@@ -360,7 +357,6 @@ const SellerInbox = ({
         />
       </div>
 
-      {/* messages */}
       <div className="px-3 h-[65vh] py-3 overflow-y-scroll">
         {messages &&
           // eslint-disable-next-line no-unused-vars
@@ -430,7 +426,7 @@ const SellerInbox = ({
             placeholder="Enter your message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className={`${styles.input}`}
+            className="w-full border p-1 rounded-[5px]"
           />
           <input type="submit" value="Send" className="hidden" id="send" />
           <label htmlFor="send">

@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { server } from "../../server";
-import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
@@ -17,7 +15,7 @@ const ShopInfo = ({ isOwner }) => {
   useEffect(() => {
     dispatch(getAllProductsShop(id));
     setIsLoading(true);
-    axios.get(`${server}/shop/get-shop-info/${id}`).then((res) => {
+    axios.get(`/shop/get-shop-info/${id}`).then((res) => {
      setData(res.data.shop);
      setIsLoading(false);
     }).catch((error) => {
@@ -28,7 +26,7 @@ const ShopInfo = ({ isOwner }) => {
   
 
   const logoutHandler = async () => {
-    axios.get(`${server}/shop/logout`,{
+    axios.get(`/shop/logout`,{
       withCredentials: true,
     });
     window.location.reload();
@@ -85,11 +83,11 @@ const ShopInfo = ({ isOwner }) => {
       {isOwner && (
         <div className="py-3 px-4">
            <Link to="/settings">
-           <div className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}>
+           <div className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer !w-full !h-[42px] !rounded-[5px]'>
             <span className="text-white">Edit Shop</span>
           </div>
            </Link>
-          <div className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}
+          <div className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer !w-full !h-[42px] !rounded-[5px]'
           onClick={logoutHandler}
           >
             <span className="text-white">Log Out</span>

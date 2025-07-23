@@ -5,9 +5,7 @@ import { useEffect, useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
-import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 
 const AllCoupons = () => {
@@ -27,7 +25,7 @@ const AllCoupons = () => {
     useEffect(() => {
         setIsLoading(true);
         axios
-            .get(`${server}/coupon/get-coupon/${seller._id}`, {
+            .get(`/coupon/get-coupon/${seller._id}`, {
                 withCredentials: true,
             })
             .then((res) => {
@@ -42,7 +40,7 @@ const AllCoupons = () => {
 
     const handleDelete = async (id) => {
         // eslint-disable-next-line no-unused-vars
-        axios.delete(`${server}/coupon/delete-coupon/${id}`, { withCredentials: true }).then((res) => {
+        axios.delete(`/coupon/delete-coupon/${id}`, { withCredentials: true }).then((res) => {
             toast.success("Coupon code deleted succesfully!")
         })
         window.location.reload();
@@ -53,7 +51,7 @@ const AllCoupons = () => {
 
         await axios
             .post(
-                `${server}/coupon/create-coupon-code`,
+                `/coupon/create-coupon-code`,
                 {
                     name,
                     minAmount,
@@ -128,7 +126,7 @@ const AllCoupons = () => {
                 <div className="w-full mx-8 pt-1 mt-10 bg-white">
                     <div className="w-full flex justify-end">
                         <div
-                            className={`${styles.button} !w-max !h-[45px] px-3 !rounded-[5px] mr-3 mb-3`}
+                            className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer !w-max !h-[45px] px-3 !rounded-[5px] mr-3 mb-3'
                             onClick={() => setOpen(true)}
                         >
                             <span className="text-white">Create Coupon Code</span>

@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { BsFillBagFill } from "react-icons/bs";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import styles from "../styles/styles";
 import { getAllOrdersOfUser } from "../redux/actions/order";
-import { server } from "../server";
 import { RxCross1 } from "react-icons/rx";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import axios from "axios";
@@ -31,7 +29,7 @@ const UserOrderDetails = () => {
   const reviewHandler = async (e) => {
     await axios
       .put(
-        `${server}/product/create-new-review`,
+        `/product/create-new-review`,
         {
           user,
           rating,
@@ -54,7 +52,7 @@ const UserOrderDetails = () => {
   };
   
   const refundHandler = async () => {
-    await axios.put(`${server}/order/order-refund/${id}`,{
+    await axios.put(`/order/order-refund/${id}`,{
       status: "Processing refund"
     }).then((res) => {
        toast.success(res.data.message);
@@ -65,7 +63,7 @@ const UserOrderDetails = () => {
   };
 
   return (
-    <div className={`py-4 min-h-screen ${styles.section}`}>
+    <div className={`py-4 min-h-screen w-11/12 mx-auto`}>
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center">
           <BsFillBagFill size={30} color="crimson" />
@@ -102,7 +100,7 @@ const UserOrderDetails = () => {
               </h5>
             </div>
             {!item.isReviewed && data?.status === "Delivered" ?  <div
-                className={`${styles.button} text-[#fff]`}
+                className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-[#fff]`}
                 onClick={() => setOpen(true) || setSelectedItem(item)}
               >
                 Write a review
@@ -190,7 +188,7 @@ const UserOrderDetails = () => {
               ></textarea>
             </div>
             <div
-              className={`${styles.button} text-white text-[20px] ml-3`}
+              className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white text-[20px] ml-3`}
               onClick={rating > 1 ? reviewHandler : null}
             >
               Submit
@@ -227,7 +225,7 @@ const UserOrderDetails = () => {
           <br />
            {
             data?.status === "Delivered" && (
-              <div className={`${styles.button} text-white`}
+              <div className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white`}
               onClick={refundHandler}
               >Give a Refund</div>
             )
@@ -236,7 +234,7 @@ const UserOrderDetails = () => {
       </div>
       <br />
       <Link to="/">
-        <div className={`${styles.button} text-white`}>Send Message</div>
+        <div className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white`}>Send Message</div>
       </Link>
       <br />
       <br />

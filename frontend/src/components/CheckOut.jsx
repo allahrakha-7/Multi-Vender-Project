@@ -1,11 +1,9 @@
 import { useState } from "react";
-import styles from "../../styles/styles";
 import { Country, State } from "country-state-city";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 
 const Checkout = () => {
@@ -66,7 +64,7 @@ const Checkout = () => {
     e.preventDefault();
     const name = couponCode;
 
-    await axios.get(`${server}/coupon/get-coupon-value/${name}`).then((res) => {
+    await axios.get(`/coupon/get-coupon-value/${name}`).then((res) => {
       const shopId = res.data.couponCode?.shopId;
       const couponCodeValue = res.data.couponCode?.value;
       if (res.data.couponCode !== null) {
@@ -135,7 +133,7 @@ const Checkout = () => {
         </div>
       </div>
       <div
-        className={`${styles.button} w-[150px] 800px:w-[280px] mt-10`}
+        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer w-[150px] 800px:w-[280px] mt-10'
         onClick={paymentSubmit}
       >
         <h5 className="text-white">Go to Payment</h5>
@@ -171,7 +169,7 @@ const ShippingInfo = ({
               type="text"
               value={user && user.name}
               required
-              className={`${styles.input} !w-[95%]`}
+              className="w-full border p-1 rounded-[5px]"
             />
           </div>
           <div className="w-[50%]">
@@ -180,7 +178,7 @@ const ShippingInfo = ({
               type="email"
               value={user && user.email}
               required
-              className={`${styles.input}`}
+              className="w-full border p-1 rounded-[5px]"
             />
           </div>
         </div>
@@ -192,7 +190,7 @@ const ShippingInfo = ({
               type="number"
               required
               value={user && user.phoneNumber}
-              className={`${styles.input} !w-[95%]`}
+              className="w-full border p-1 rounded-[5px]"
             />
           </div>
           <div className="w-[50%]">
@@ -202,7 +200,7 @@ const ShippingInfo = ({
               value={zipCode}
               onChange={(e) => setZipCode(e.target.value)}
               required
-              className={`${styles.input}`}
+              className="w-full border p-1 rounded-[5px]"
             />
           </div>
         </div>
@@ -254,7 +252,7 @@ const ShippingInfo = ({
               required
               value={address1}
               onChange={(e) => setAddress1(e.target.value)}
-              className={`${styles.input} !w-[95%]`}
+              className="w-full border p-1 rounded-[5px]"
             />
           </div>
           <div className="w-[50%]">
@@ -264,7 +262,7 @@ const ShippingInfo = ({
               value={address2}
               onChange={(e) => setAddress2(e.target.value)}
               required
-              className={`${styles.input}`}
+              className="w-full border p-1 rounded-[5px]"
             />
           </div>
         </div>
@@ -336,7 +334,7 @@ const CartData = ({
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          className={`${styles.input} h-[40px] pl-2`}
+          className="w-full border p-1 rounded-[5px] h-[40px] pl-2"
           placeholder="Coupoun code"
           value={couponCode}
           onChange={(e) => setCouponCode(e.target.value)}

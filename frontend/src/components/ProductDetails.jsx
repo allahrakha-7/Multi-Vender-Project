@@ -7,14 +7,12 @@ import {
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllProductsShop } from "../../redux/actions/product";
-import { server } from "../../server";
-import styles from "../../styles/styles";
+import { getAllProductsShop } from "../redux/actions/product";
 import {
   addToWishlist,
   removeFromWishlist,
-} from "../../redux/actions/wishlist";
-import { addTocart } from "../../redux/actions/cart";
+} from "../redux/actions/wishlist";
+import { addTocart } from "../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "./Ratings";
 import axios from "axios";
@@ -96,7 +94,7 @@ const ProductDetails = ({ data }) => {
       const userId = user._id;
       const sellerId = data.shop._id;
       await axios
-        .post(`${server}/conversation/create-new-conversation`, {
+        .post(`/conversation/create-new-conversation`, {
           groupTitle,
           userId,
           sellerId,
@@ -115,7 +113,7 @@ const ProductDetails = ({ data }) => {
   return (
     <div className="bg-white">
       {data ? (
-        <div className={`${styles.section} w-[90%] 800px:w-[80%]`}>
+        <div className={`mx-auto w-[90%] 800px:w-[80%]`}>
           <div className="w-full py-5">
             <div className="block w-full 800px:flex">
               <div className="w-full 800px:w-[50%]">
@@ -148,13 +146,13 @@ const ProductDetails = ({ data }) => {
                 </div>
               </div>
               <div className="w-full 800px:w-[50%] pt-5">
-                <h1 className={`${styles.productTitle}`}>{data.name}</h1>
+                <h1 className={`text-[25px] font-[600] font-Roboto text-[#333]`}>{data.name}</h1>
                 <p>{data.description}</p>
                 <div className="flex pt-3">
-                  <h4 className={`${styles.productDiscountPrice}`}>
+                  <h4 className={`font-bold text-[18px] text-[#333] font-Roboto`}>
                     {data.discountPrice}$
                   </h4>
-                  <h3 className={`${styles.price}`}>
+                  <h3 className={`font-[500] text-[16px] text-[#d55b45] pl-3 mt-[-4px] line-through`}>
                     {data.originalPrice ? data.originalPrice + "$" : null}
                   </h3>
                 </div>
@@ -198,7 +196,7 @@ const ProductDetails = ({ data }) => {
                   </div>
                 </div>
                 <div
-                  className={`${styles.button} !mt-6 !rounded !h-11 flex items-center`}
+                  className={`w-[150px] bg-black h-[50px] my-3 justify-center rounded-xl cursor-pointer !mt-6 flex items-center`}
                   onClick={() => addToCartHandler(data._id)}
                 >
                   <span className="text-white flex items-center">
@@ -215,7 +213,7 @@ const ProductDetails = ({ data }) => {
                   </Link>
                   <div className="pr-8">
                     <Link to={`/shop/preview/${data?.shop._id}`}>
-                      <h3 className={`${styles.shop_name} pb-1 pt-1`}>
+                      <h3 className={`pt-3 text-[15px] text-blue-400 pb-3 `}>
                         {data.shop.name}
                       </h3>
                     </Link>
@@ -224,7 +222,7 @@ const ProductDetails = ({ data }) => {
                     </h5>
                   </div>
                   <div
-                    className={`${styles.button} bg-[#6443d1] mt-4 !rounded !h-11`}
+                    className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer mt-4`}
                     onClick={handleMessageSubmit}
                   >
                     <span className="text-white flex items-center">
@@ -270,7 +268,7 @@ const ProductDetailsInfo = ({
             Product Details
           </h5>
           {active === 1 ? (
-            <div className={`${styles.active_indicator}`} />
+            <div className={`absolute bottom-[-27%] left-0 h-[3px] w-full bg-[crimson]`} />
           ) : null}
         </div>
         <div className="relative">
@@ -283,7 +281,7 @@ const ProductDetailsInfo = ({
             Product Reviews
           </h5>
           {active === 2 ? (
-            <div className={`${styles.active_indicator}`} />
+            <div className={`absolute bottom-[-27%] left-0 h-[3px] w-full bg-[crimson]`} />
           ) : null}
         </div>
         <div className="relative">
@@ -296,7 +294,7 @@ const ProductDetailsInfo = ({
             Seller Information
           </h5>
           {active === 3 ? (
-            <div className={`${styles.active_indicator}`} />
+            <div className={`absolute bottom-[-27%] left-0 h-[3px] w-full bg-[crimson]`} />
           ) : null}
         </div>
       </div>
@@ -348,7 +346,7 @@ const ProductDetailsInfo = ({
                   alt=""
                 />
                 <div className="pl-3">
-                  <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
+                  <h3 className={`pt-3 text-[15px] text-blue-400 pb-3`}>{data.shop.name}</h3>
                   <h5 className="pb-2 text-[15px]">
                     ({averageRating}/5) Ratings
                   </h5>
@@ -377,7 +375,7 @@ const ProductDetailsInfo = ({
               </h5>
               <Link to="/">
                 <div
-                  className={`${styles.button} !rounded-[4px] !h-[39.5px] mt-3`}
+                  className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer mt-3`}
                 >
                   <h4 className="text-white">Visit Shop</h4>
                 </div>

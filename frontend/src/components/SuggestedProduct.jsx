@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { productData } from "../../static/data";
-import styles from "../../styles/styles";
-import ProductCard from "../Route/ProductCard/ProductCard";
+import ProductCard from "./Routes/ProductCard";
 
 const SuggestedProduct = ({ data }) => {
   const {allProducts} = useSelector((state) => state.products);
@@ -17,9 +15,9 @@ const SuggestedProduct = ({ data }) => {
   return (
     <div>
       {data ? (
-        <div className={`p-4 ${styles.section}`}>
+        <div className={`p-4 w-11/12 mx-auto`}>
           <h2
-            className={`${styles.heading} text-[25px] font-[500] border-b mb-5`}
+            className={`w-11/12 mx-auto text-[25px] font-[500] border-b mb-5`}
           >
             Related Product
           </h2>

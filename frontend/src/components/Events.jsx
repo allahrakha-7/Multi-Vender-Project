@@ -1,6 +1,4 @@
-import useEffect from 'react'
 import { useSelector } from 'react-redux';
-import styles from '../../styles/styles'
 import EventCard from "./EventCard";
 
 const Events = () => {
@@ -10,8 +8,8 @@ const Events = () => {
     <div>
      {
       !isLoading && (
-        <div className={`${styles.section}`}>
-      <div className={`${styles.heading}`}>
+        <div className={`w-11/12 mx-auto`}>
+      <div className={`text-[27px] text-center md:text-start font-[600] font-Roboto pb-[20px]`}>
         <h1>Popular Events</h1>
       </div>
 

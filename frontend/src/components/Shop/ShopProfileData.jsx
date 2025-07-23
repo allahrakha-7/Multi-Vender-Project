@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getAllProductsShop } from "../../redux/actions/product";
-import styles from "../../styles/styles";
-import ProductCard from "../Route/ProductCard/ProductCard";
-import Ratings from "../Products/Ratings";
+import ProductCard from "../Routes/ProductCard";
+import Ratings from "../Ratings";
 import { getAllEventsShop } from "../../redux/actions/event";
 
 const ShopProfileData = ({ isOwner }) => {
@@ -61,7 +60,7 @@ const ShopProfileData = ({ isOwner }) => {
           {isOwner && (
             <div>
               <Link to="/dashboard">
-                <div className={`${styles.button} !rounded-[4px] h-[42px]`}>
+                <div className="w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer !rounded-[4px] h-[42px]">
                   <span className="text-[#fff]">Go Dashboard</span>
                 </div>
               </Link>

@@ -1,8 +1,7 @@
-import styles from "../../styles/styles";
 import CountDown from "./CountDown";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addTocart } from "../../redux/actions/cart";
+import { addTocart } from "../redux/actions/cart";
 import { toast } from "react-toastify";
 
 const EventCard = ({ active, data }) => {
@@ -33,7 +32,7 @@ const EventCard = ({ active, data }) => {
         <img src={`${data.images[0]?.url}`} alt="" />
       </div>
       <div className="w-full lg:[w-50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>{data.name}</h2>
+        <h2 className={`text-[25px] font-[600] font-Roboto text-[#333]`}>{data.name}</h2>
         <p>{data.description}</p>
         <div className="flex py-2 justify-between">
           <div className="flex">
@@ -52,9 +51,9 @@ const EventCard = ({ active, data }) => {
         <br />
         <div className="flex items-center">
           <Link to={`/product/${data._id}?isEvent=true`}>
-            <div className={`${styles.button} text-[#fff]`}>See Details</div>
+            <div className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-[#fff]`}>See Details</div>
           </Link>
-          <div className={`${styles.button} text-[#fff] ml-5`} onClick={() => addToCartHandler(data)}>Add to cart</div>
+          <div className={`w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-[#fff] ml-5`} onClick={() => addToCartHandler(data)}>Add to cart</div>
         </div>
       </div>
     </div>

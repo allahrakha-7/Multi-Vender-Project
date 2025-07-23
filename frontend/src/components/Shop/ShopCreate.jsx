@@ -1,9 +1,7 @@
 import useState from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import styles from "../../styles/styles";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
 
@@ -21,7 +19,7 @@ const ShopCreate = () => {
     e.preventDefault();
 
     axios
-      .post(`${server}/shop/create-shop`, {
+      .post(`/shop/create-shop`, {
         name,
         email,
         password,
@@ -237,7 +235,7 @@ const ShopCreate = () => {
                 Submit
               </button>
             </div>
-            <div className={`${styles.noramlFlex} w-full`}>
+            <div className="flex items-center w-full">
               <h4>Already have an account?</h4>
               <Link to="/shop-login" className="text-blue-600 pl-2">
                 Sign in
