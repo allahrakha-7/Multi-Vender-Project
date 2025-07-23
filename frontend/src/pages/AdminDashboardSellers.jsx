@@ -1,5 +1,5 @@
 import AdminHeader from '../components/Layout/AdminHeader'
-import AdminSideBar from '../components/Admin/Layout/AdminSideBar'
+import AdminSideBar from '../components/Admin/AdminSideBar'
 import AllSellers from "../components/Admin/AllSellers";
 
 const AdminDashboardSellers = () => {

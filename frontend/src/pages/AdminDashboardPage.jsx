@@ -1,6 +1,6 @@
 import AdminHeader from "../components/Layout/AdminHeader";
-import AdminSideBar from "../components/Admin/Layout/AdminSideBar";
-import AdminDashboardMain from "../components/Admin/AdminDashboardMain";
+import AdminSideBar from "../components/Admin/AdminSideBar";
+import AdminMainDashboard from "../components/Admin/AdminMainDashboard";
 
 const AdminDashboardPage = () => {
   return (
@@ -11,7 +11,7 @@ const AdminDashboardPage = () => {
           <div className="w-[80px] 800px:w-[330px]">
             <AdminSideBar active={1} />
           </div>
-          <AdminDashboardMain />
+          <AdminMainDashboard />
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
 import useEffect from 'react'
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Signup from "../components/Signup";
+import Signup from '../components/Signup'
 
-const Signup = () => {
+const SignUp = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state) => state.user);
 
@@ -19,4 +19,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default SignUp

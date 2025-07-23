@@ -1,9 +1,9 @@
 import Header from '../components/Layout/Header'
-import CheckoutSteps from "../components/Checkout/CheckoutSteps";
-import Checkout from "../components/Checkout/Checkout";
+import CheckoutSteps from "../components/CheckOutSteps";
+import Checkout from "../components/CheckOut";
 import Footer from '../components/Layout/Footer';
 
-const CheckoutPage = () => {
+const CheckOutPage = () => {
   return (
     <div>
         <Header />
@@ -18,4 +18,4 @@ const CheckoutPage = () => {
   )
 }
 
-export default CheckoutPage
+export default CheckOutPage

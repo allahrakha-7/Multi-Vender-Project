@@ -1,7 +1,7 @@
-import CheckoutSteps from '../components/Checkout/CheckoutSteps'
+import CheckoutSteps from '../components/CheckOutSteps'
 import Footer from '../components/Layout/Footer'
 import Header from '../components/Layout/Header'
-import Payment from "../components/Payment/Payment";
+import Payment from "../components/Payment";
 
 const PaymentPage = () => {
   return (
