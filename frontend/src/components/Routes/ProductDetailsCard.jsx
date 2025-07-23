@@ -7,14 +7,13 @@ import {
 } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { Link } from "react-router-dom";
-import styles from "../../../styles/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { addTocart } from "../../../redux/actions/cart";
+import { addTocart } from "../../redux/actions/cart";
 import {
   addToWishlist,
   removeFromWishlist,
-} from "../../../redux/actions/wishlist";
+} from "../../redux/actions/wishlist";
 
 const ProductDetailsCard = ({ setOpen, data }) => {
   const { cart } = useSelector((state) => state.cart);
@@ -22,7 +21,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
-  //   const [select, setSelect] = useState(false);
+    // const [select, setSelect] = useState(false);
 
   const handleMessageSubmit = () => {};
 
@@ -91,7 +90,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
                     <div>
-                      <h3 className={`${styles.shop_name}`}>
+                      <h3 className="pt-3 text-[15px] text-blue-400 pb-3">
                         {data.shop.name}
                       </h3>
                       <h5 className="pb-3 text-[15px]">{data?.ratings} Ratings</h5>
@@ -99,7 +98,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   </Link>
                 </div>
                 <div
-                  className={`${styles.button} bg-[#000] mt-4 rounded-[4px] h-11`}
+                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer bg-[#000] mt-4 rounded-[4px] h-11'
                   onClick={handleMessageSubmit}
                 >
                   <span className="text-[#fff] flex items-center">
@@ -110,16 +109,16 @@ const ProductDetailsCard = ({ setOpen, data }) => {
               </div>
 
               <div className="w-full 800px:w-[50%] pt-5 pl-[5px] pr-[5px]">
-                <h1 className={`${styles.productTitle} text-[20px]`}>
+                <h1 className='text-[25px] font-[600] font-Roboto text-[#333] text-[20px]'>
                   {data.name}
                 </h1>
                 <p>{data.description}</p>
 
                 <div className="flex pt-3">
-                  <h4 className={`${styles.productDiscountPrice}`}>
+                  <h4 className="font-bold text-[18px] text-[#333] font-Roboto">
                     {data.discountPrice}$
                   </h4>
-                  <h3 className={`${styles.price}`}>
+                  <h3 className="font-[500] text-[16px] text-[#d55b45] pl-3 mt-[-4px] line-through">
                     {data.originalPrice ? data.originalPrice + "$" : null}
                   </h3>
                 </div>
@@ -161,7 +160,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   </div>
                 </div>
                 <div
-                  className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center`}
+                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer mt-6 rounded-[4px] h-11 flex items-center'
                   onClick={() => addToCartHandler(data._id)}
                 >
                   <span className="text-[#fff] flex items-center">
