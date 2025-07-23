@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import Footer from "../components/Layout/Footer";
 import Header from "../components/Layout/Header";
-import ProductDetails from "../components/Products/ProductDetails";
-import SuggestedProduct from "../components/Products/SuggestedProduct";
+import ProductDetails from "../components/ProductDetails";
+import SuggestedProduct from "../components/SuggestedProduct";
 import { useSelector } from "react-redux";
 
 const ProductDetailsPage = () => {

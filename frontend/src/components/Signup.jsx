@@ -1,10 +1,8 @@
 import useState from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 
 const Singup = () => {
@@ -30,7 +28,7 @@ const Singup = () => {
     e.preventDefault();
 
     axios
-      .post(`${server}/user/create-user`, { name, email, password, avatar })
+      .post(`/user/create-user`, { name, email, password, avatar })
       .then((res) => {
         toast.success(res.data.message);
         setName("");
@@ -168,7 +166,7 @@ const Singup = () => {
                 Submit
               </button>
             </div>
-            <div className={`${styles.noramlFlex} w-full`}>
+            <div className={`flex items-center w-full`}>
               <h4>Already have an account?</h4>
               <Link to="/login" className="text-blue-600 pl-2">
                 Sign In

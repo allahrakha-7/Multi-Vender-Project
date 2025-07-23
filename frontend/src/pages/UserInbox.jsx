@@ -3,12 +3,10 @@ import Header from "../components/Layout/Header";
 import { useSelector } from "react-redux";
 import socketIO from "socket.io-client";
 import { format } from "timeago.js";
-import { server } from "../server";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
-import styles from "../styles/styles";
 const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
@@ -47,7 +45,7 @@ const UserInbox = () => {
     const getConversation = async () => {
       try {
         const resonse = await axios.get(
-          `${server}/conversation/get-all-conversation-user/${user?._id}`,
+          `/conversation/get-all-conversation-user/${user?._id}`,
           {
             withCredentials: true,
           }
@@ -78,12 +76,11 @@ const UserInbox = () => {
     return online ? true : false;
   };
 
-  // get messages
   useEffect(() => {
     const getMessage = async () => {
       try {
         const response = await axios.get(
-          `${server}/message/get-all-messages/${currentChat?._id}`
+          `/message/get-all-messages/${currentChat?._id}`
         );
         setMessages(response.data.messages);
       } catch (error) {
@@ -93,7 +90,6 @@ const UserInbox = () => {
     getMessage();
   }, [currentChat]);
 
-  // create new message
   const sendMessageHandler = async (e) => {
     e.preventDefault();
 
@@ -115,7 +111,7 @@ const UserInbox = () => {
     try {
       if (newMessage !== "") {
         await axios
-          .post(`${server}/message/create-new-message`, message)
+          .post(`/message/create-new-message`, message)
           .then((res) => {
             setMessages([...messages, res.data.message]);
             updateLastMessage();
@@ -136,7 +132,7 @@ const UserInbox = () => {
     });
 
     await axios
-      .put(`${server}/conversation/update-last-message/${currentChat._id}`, {
+      .put(`/conversation/update-last-message/${currentChat._id}`, {
         lastMessage: newMessage,
         lastMessageId: user._id,
       })
@@ -177,7 +173,7 @@ const UserInbox = () => {
     try {
       await axios
         .post(
-          `${server}/message/create-new-message`,
+          `/message/create-new-message`,
           {
             images: e,
             sender: user._id,
@@ -197,7 +193,7 @@ const UserInbox = () => {
 
   const updateLastMessageForImage = async () => {
     await axios.put(
-      `${server}/conversation/update-last-message/${currentChat._id}`,
+      `/conversation/update-last-message/${currentChat._id}`,
       {
         lastMessage: "Photo",
         lastMessageId: user._id,
@@ -217,7 +213,6 @@ const UserInbox = () => {
           <h1 className="text-center text-[30px] py-3 font-Poppins">
             All Messages
           </h1>
-          {/* All messages list */}
           {conversations &&
             conversations.map((item, index) => (
               <MessageList
@@ -265,8 +260,7 @@ const MessageList = ({
   userData,
   online,
   setActiveStatus,
-  loading
-}) => {
+  loading }) => {
   const [active, setActive] = useState(0);
   const [user, setUser] = useState([]);
   const navigate = useNavigate();
@@ -280,7 +274,7 @@ const MessageList = ({
     const userId = data.members.find((user) => user !== me);
     const getUser = async () => {
       try {
-        const res = await axios.get(`${server}/shop/get-shop-info/${userId}`);
+        const res = await axios.get(`/shop/get-shop-info/${userId}`);
         setUser(res.data.shop);
       } catch (error) {
         console.log(error);
@@ -318,8 +312,7 @@ const MessageList = ({
       <div className="pl-3">
         <h1 className="text-[18px]">{user?.name}</h1>
         <p className="text-[16px] text-[#000c]">
-          {!loading && data?.lastMessageId !== userData?._id
-            ? "You:"
+          {!loading && data?.lastMessageId !== userData?._id ? "You:"
             : userData?.name.split(" ")[0] + ": "}{" "}
           {data?.lastMessage}
         </p>
@@ -342,7 +335,6 @@ const SellerInbox = ({
 }) => {
   return (
     <div className="w-[full] min-h-full flex flex-col justify-between p-5">
-      {/* message header */}
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
           <img
@@ -362,7 +354,6 @@ const SellerInbox = ({
         />
       </div>
 
-      {/* messages */}
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
         {messages &&
           // eslint-disable-next-line no-unused-vars
@@ -405,7 +396,6 @@ const SellerInbox = ({
           ))}
       </div>
 
-      {/* send message input */}
       <form
         aria-required={true}
         className="p-3 relative w-full flex justify-between items-center"
@@ -430,7 +420,7 @@ const SellerInbox = ({
             placeholder="Enter your message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className={`${styles.input}`}
+            className="w-full border p-1 rounded-[5px]"
           />
           <input type="submit" value="Send" className="hidden" id="send" />
           <label htmlFor="send">
