@@ -4,9 +4,8 @@ import Stripe from 'stripe';
 
 const router = express.Router();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 router.post( "/process", catchAsyncError(async (req, res, next) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
    const myPayment = await stripe.paymentIntents.create({
      amount: req.body.amount,
      currency: "pkr",

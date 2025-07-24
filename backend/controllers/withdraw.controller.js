@@ -109,4 +109,5 @@ router.put( "/update-withdraw-request/:id", isAuthenticated, isAdmin("Admin"),
   })
 );
 
-module.exports = router;
+
+export default router;

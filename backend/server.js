@@ -1,8 +1,13 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import app from './app.js';
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
 
+if (process.env.NODE_ENV !== "PRODUCTION") {
+  dotenv.config();
+}
+
+process.setMaxListeners(15);
 
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
@@ -10,14 +15,12 @@ process.on("uncaughtException", (err) => {
 });
 
 
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  dotenv.config();
-}
-
-mongoose.connect(process.env.MONGO, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('Connected to MongoDB!')).catch((err) => console.log(err));
+mongoose.connect(process.env.MONGO)
+  .then(() => console.log('Connected to MongoDB!'))
+  .catch((err) => {
+    console.log('MongoDB connection error:', err);
+    process.exit(1);
+});
 
 
 cloudinary.config({
@@ -27,10 +30,8 @@ cloudinary.config({
 });
 
 
-const server = app.listen(process.env.PORT, () => {
-  console.log(
-    `Server is running on http://localhost:${process.env.PORT}`
-  );
+const server = app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is running on http://localhost:${process.env.PORT || 3000}`);
 });
 
 

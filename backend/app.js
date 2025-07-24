@@ -4,6 +4,10 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 
+if (process.env.NODE_ENV !== "PRODUCTION") {
+  dotenv.config();
+}
+
 const app = express();
 
 app.use(express.json());
@@ -11,20 +15,17 @@ app.use(cookieParser());
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  dotenv.config();
-}
 
-import user from "./controller/user.js";
-import shop from "./controller/shop.js";
-import product from "./controller/product.js";
-import event from "./controller/event.js";
-import coupon from "./controller/coupounCode.js";
-import payment from "./controller/payment.js";
-import order from "./controller/order.js";
-import conversation from "./controller/conversation.js";
-import message from "./controller/message.js";
-import withdraw from "./controller/withdraw.js";
+import user from './controllers/user.controller.js';
+import shop from './controllers/shop.controller.js'
+import product from './controllers/products.controller.js';
+import event from './controllers/events.controller.js';
+import coupon from './controllers/coupounCode.controller.js';
+import payment from './controllers/payments.controller.js';
+import order from './controllers/orders.controller.js';
+import conversation from './controllers/conversation.controller.js';
+import message from './controllers/messages.controller.js';
+import withdraw from './controllers/withdraw.controller.js';
 
 app.use("/api/v1/user", user);
 app.use("/api/v1/conversation", conversation);
