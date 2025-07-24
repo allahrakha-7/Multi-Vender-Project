@@ -1,5 +1,5 @@
 import DashboardHeader from '../../components/Shop/Layout/DashboardHeader'
-import CreateEvent from "../../components/Shop/CreateEvent";
+import CreateEvent from "../../components/Shop/CreateEvents";
 import DashboardSideBar from '../../components/Shop/Layout/DashboardSideBar';
 
 const ShopCreateEvents = () => {

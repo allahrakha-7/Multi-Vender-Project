@@ -5,10 +5,10 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
-import socketIO from "socket.io-client";
+// import socketIO from "socket.io-client";
 import { format } from "timeago.js";
-const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
-const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
+// const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
+// const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const DashboardMessages = () => {
   const { seller,isLoading } = useSelector((state) => state.seller);

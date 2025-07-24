@@ -1,6 +1,6 @@
 import Header from '../components/Layout/Header'
 import Footer from '../components/Layout/Footer'
-import Trackorder from "../components/Profile/TrackOrder";
+import Trackorder from "../components/TrackOrder";
 
 const TrackOrder = () => {
   return (

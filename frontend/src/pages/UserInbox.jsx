@@ -1,45 +1,45 @@
 import { useEffect, useRef, useState } from "react";
 import Header from "../components/Layout/Header";
 import { useSelector } from "react-redux";
-import socketIO from "socket.io-client";
+// import socketIO from "socket.io-client";
 import { format } from "timeago.js";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
-const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
-const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
+// const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
+// const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const UserInbox = () => {
   const { user,loading } = useSelector((state) => state.user);
   const [conversations, setConversations] = useState([]);
-  const [arrivalMessage, setArrivalMessage] = useState(null);
+  // const [arrivalMessage, setArrivalMessage] = useState(null);
   const [currentChat, setCurrentChat] = useState();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  // const [onlineUsers, setOnlineUsers] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [images, setImages] = useState();
   const [activeStatus, setActiveStatus] = useState(false);
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
 
-  useEffect(() => {
-    socketId.on("getMessage", (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   socketId.on("getMessage", (data) => {
+  //     setArrivalMessage({
+  //       sender: data.senderId,
+  //       text: data.text,
+  //       createdAt: Date.now(),
+  //     });
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    arrivalMessage &&
-      currentChat?.members.includes(arrivalMessage.sender) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage, currentChat]);
+  // useEffect(() => {
+  //   arrivalMessage &&
+  //     currentChat?.members.includes(arrivalMessage.sender) &&
+  //     setMessages((prev) => [...prev, arrivalMessage]);
+  // }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
     const getConversation = async () => {
@@ -59,22 +59,22 @@ const UserInbox = () => {
     getConversation();
   }, [user, messages]);
 
-  useEffect(() => {
-    if (user) {
-      const sellerId = user?._id;
-      socketId.emit("addUser", sellerId);
-      socketId.on("getUsers", (data) => {
-        setOnlineUsers(data);
-      });
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     const sellerId = user?._id;
+  //     socketId.emit("addUser", sellerId);
+  //     socketId.on("getUsers", (data) => {
+  //       setOnlineUsers(data);
+  //     });
+  //   }
+  // }, [user]);
 
-  const onlineCheck = (chat) => {
-    const chatMembers = chat.members.find((member) => member !== user?._id);
-    const online = onlineUsers.find((user) => user.userId === chatMembers);
+  // const onlineCheck = (chat) => {
+  //   const chatMembers = chat.members.find((member) => member !== user?._id);
+  //   const online = onlineUsers.find((user) => user.userId === chatMembers);
 
-    return online ? true : false;
-  };
+  //   return online ? true : false;
+  // };
 
   useEffect(() => {
     const getMessage = async () => {
@@ -98,15 +98,15 @@ const UserInbox = () => {
       text: newMessage,
       conversationId: currentChat._id,
     };
-    const receiverId = currentChat.members.find(
-      (member) => member !== user?._id
-    );
+    // const receiverId = currentChat.members.find(
+    //   (member) => member !== user?._id
+    // );
 
-    socketId.emit("sendMessage", {
-      senderId: user?._id,
-      receiverId,
-      text: newMessage,
-    });
+    // socketId.emit("sendMessage", {
+    //   senderId: user?._id,
+    //   receiverId,
+    //   text: newMessage,
+    // });
 
     try {
       if (newMessage !== "") {
@@ -114,7 +114,7 @@ const UserInbox = () => {
           .post(`/message/create-new-message`, message)
           .then((res) => {
             setMessages([...messages, res.data.message]);
-            updateLastMessage();
+            // updateLastMessage();
           })
           .catch((error) => {
             console.log(error);
@@ -125,25 +125,25 @@ const UserInbox = () => {
     }
   };
 
-  const updateLastMessage = async () => {
-    socketId.emit("updateLastMessage", {
-      lastMessage: newMessage,
-      lastMessageId: user._id,
-    });
+  // const updateLastMessage = async () => {
+  //   socketId.emit("updateLastMessage", {
+  //     lastMessage: newMessage,
+  //     lastMessageId: user._id,
+  //   });
 
-    await axios
-      .put(`/conversation/update-last-message/${currentChat._id}`, {
-        lastMessage: newMessage,
-        lastMessageId: user._id,
-      })
-      // eslint-disable-next-line no-unused-vars
-      .then((res) => {
-        setNewMessage("");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  //   await axios
+  //     .put(`/conversation/update-last-message/${currentChat._id}`, {
+  //       lastMessage: newMessage,
+  //       lastMessageId: user._id,
+  //     })
+  //     // eslint-disable-next-line no-unused-vars
+  //     .then((res) => {
+  //       setNewMessage("");
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
   const handleImageUpload = async (e) => {
     const reader = new FileReader();
@@ -160,15 +160,15 @@ const UserInbox = () => {
 
   const imageSendingHandler = async (e) => {
 
-    const receiverId = currentChat.members.find(
-      (member) => member !== user._id
-    );
+    // const receiverId = currentChat.members.find(
+    //   (member) => member !== user._id
+    // );
 
-    socketId.emit("sendMessage", {
-      senderId: user._id,
-      receiverId,
-      images: e,
-    });
+    // socketId.emit("sendMessage", {
+    //   senderId: user._id,
+    //   receiverId,
+    //   images: e,
+    // });
 
     try {
       await axios
@@ -224,7 +224,7 @@ const UserInbox = () => {
                 me={user?._id}
                 setUserData={setUserData}
                 userData={userData}
-                online={onlineCheck(item)}
+                // online={onlineCheck(item)}
                 setActiveStatus={setActiveStatus}
                 loading={loading}
               />

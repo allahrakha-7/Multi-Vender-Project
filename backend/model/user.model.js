@@ -1,86 +1,89 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
-    username: {
+  name:{
+    type: String,
+    required: [true, "Please enter your name!"],
+  },
+  email:{
+    type: String,
+    required: [true, "Please enter your email!"],
+  },
+  password:{
+    type: String,
+    required: [true, "Please enter your password"],
+    minLength: [4, "Password should be greater than 4 characters"],
+    select: false,
+  },
+  phoneNumber:{
+    type: Number,
+  },
+  addresses:[
+    {
+      country: {
         type: String,
-        required: [true, 'Please enter your name!'],
-    },
-    email: {
+      },
+      city:{
         type: String,
-        required: [true, 'Please enter your email!'],
-    },
-    password: {
+      },
+      address1:{
         type: String,
-        required: [true, 'Please enter your password!'],
-        minLength: [6, 'Password should be greater than 4 characters!'],
-    },
-    phoneNumber: {
+      },
+      address2:{
+        type: String,
+      },
+      zipCode:{
         type: Number,
-    },
-    addresses: [
-        {
-            country: {
-                type: String,
-            },
-            city: {
-                type: String,
-            },
-            address1: {
-                type: String,
-            },
-            address2: {
-                type: String,
-            },
-            zipCode: {
-                type: Number,
-            },
-            addressType: {
-                type: String,
-            },
-        }
-    ],
-    role: {
+      },
+      addressType:{
         type: String,
-        default: 'user',
-    },
-    avatar: {
-        public_id: {
-            type: String,
-            required: true,
-        },
-        url: {
-            type: String,
-            required: true,
-        },
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now(),
-    },
-    resetPasswordToken: String,
-    resetPasswordTime: Date,
-});
-
-
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) {
-        next();
+      },
     }
-    this.password = await bcrypt.hash(this.password, 10);
+  ],
+  role:{
+    type: String,
+    default: "user",
+  },
+  avatar:{
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+ },
+ createdAt:{
+  type: Date,
+  default: Date.now(),
+ },
+ resetPasswordToken: String,
+ resetPasswordTime: Date,
 });
 
-userSchema.methods.getJwtToken = () => {
-    return jwt.sign({id: this_id}, process.env.JWT_SECRET_KEY, {
-        expiresIn: process.env.JWT_EXPIRES,
-    });
+
+//  Hash password
+userSchema.pre("save", async function (next){
+  if(!this.isModified("password")){
+    next();
+  }
+
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
+// jwt token
+userSchema.methods.getJwtToken = function () {
+  return jwt.sign({ id: this._id}, process.env.JWT_SECRET_KEY,{
+    expiresIn: process.env.JWT_EXPIRES,
+  });
 };
 
-userSchema.methods.comparePassword = async (enteredPassword) => {
-    return await bcrypt.compare(enteredPassword, this.password);
+// compare password
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
-
-export default User;
+module.exports = mongoose.model("User", userSchema);

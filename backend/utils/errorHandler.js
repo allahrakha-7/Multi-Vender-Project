@@ -1,8 +1,11 @@
-const errorHanlder = (statusCode, message) => {
-    const error = new Error();
-    error.statusCode = statusCode;
-    error.message = message;
-    return error
-}
+class ErrorHandler extends Error{
+    constructor(message,statusCode){
+        super(message);
+        this.statusCode = statusCode
 
-export default errorHanlder;
+        Error.captureStackTrace(this,this.constructor);
+
+    }
+    
+}
+module.exports = ErrorHandler

@@ -320,8 +320,6 @@ export const navItems = [
       rating: 5,
       total_sell: 80,
       stock: 10,
-      // eslint-disable-next-line no-dupe-keys
-      category:"Mobile & Tablets"
     },
     {
       id: 1,
@@ -352,8 +350,6 @@ export const navItems = [
       rating: 4,
       total_sell: 75,
       stock: 10,
-      // eslint-disable-next-line no-dupe-keys
-      category:"Computers & Laptop"
     },
     {
       id: 4,
@@ -415,8 +411,6 @@ export const navItems = [
       rating: 5,
       total_sell: 49,
       stock: 10,
-      // eslint-disable-next-line no-dupe-keys
-      category:"Shoes"
     },
     {
       id: 1,

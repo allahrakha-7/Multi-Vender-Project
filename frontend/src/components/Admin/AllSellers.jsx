@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { DataGrid } from "@material-ui/data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
-import { Button } from "@material-ui/core";
-import styles from "../../styles/styles";
+import { Button } from "@mui/material";
 import { RxCross1 } from "react-icons/rx";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { getAllSellers } from "../../redux/actions/sellers";
 import { Link } from "react-router-dom";
@@ -23,7 +21,7 @@ const AllSellers = () => {
 
   const handleDelete = async (id) => {
     await axios
-    .delete(`${server}/shop/delete-seller/${id}`, { withCredentials: true })
+    .delete(`/shop/delete-seller/${id}`, { withCredentials: true })
     .then((res) => {
       toast.success(res.data.message);
     });
@@ -136,13 +134,13 @@ const AllSellers = () => {
               </h3>
               <div className="w-full flex items-center justify-center">
                 <div
-                  className={`${styles.button} text-white text-[18px] !h-[42px] mr-4`}
+                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white text-[18px] !h-[42px] mr-4'                                    
                   onClick={() => setOpen(false)}
                 >
                   cancel
                 </div>
                 <div
-                  className={`${styles.button} text-white text-[18px] !h-[42px] ml-4`}
+                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white text-[18px] !h-[42px] mr-4'                                                      
                   onClick={() =>  setOpen(false) || handleDelete(userId)}
                 >
                   confirm

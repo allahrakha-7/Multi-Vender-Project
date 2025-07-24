@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import styles from "../../styles/styles";
+import { useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { categoriesData, productData } from "../../static/data";
 import {
@@ -13,8 +13,8 @@ import { CgProfile } from "react-icons/cg";
 import DropDown from "./DropDown";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
-import Cart from "../cart/Cart";
-import Wishlist from "../Wishlist/Wishlist";
+import Cart from "../Cart";
+import Wishlist from "../Wishlist";
 import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
@@ -53,7 +53,7 @@ const Header = ({ activeHeading }) => {
 
   return (
     <>
-      <div className={`${styles.section}`}>
+      <div className='w-11/12 mx-auto'>
         <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between">
           <div>
             <Link to="/">
@@ -98,7 +98,7 @@ const Header = ({ activeHeading }) => {
             ) : null}
           </div>
 
-          <div className={`${styles.button}`}>
+          <div className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer'>
             <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
               <h1 className="text-[#fff] flex items-center">
                 {isSeller ? "Go Dashboard" : "Become Seller"}{" "}
@@ -109,14 +109,12 @@ const Header = ({ activeHeading }) => {
         </div>
       </div>
       <div
-        className={`${
-          active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
-        } transition hidden 800px:flex items-center justify-between w-full bg-[#3321c8] h-[70px]`}
+        className={`${active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
+          } transition hidden 800px:flex items-center justify-between w-full bg-[#3321c8] h-[70px]`}
       >
         <div
-          className={`${styles.section} relative ${styles.noramlFlex} justify-between`}
+          className='w-11/12 mx-auto relative justify-between flex items-center'
         >
-          {/* categories */}
           <div onClick={() => setDropDown(!dropDown)}>
             <div className="relative h-[60px] mt-[10px] w-[270px] hidden 1000px:block">
               <BiMenuAltLeft size={30} className="absolute top-3 left-2" />
@@ -139,12 +137,12 @@ const Header = ({ activeHeading }) => {
             </div>
           </div>
           {/* navitems */}
-          <div className={`${styles.noramlFlex}`}>
+          <div className="flex items-center">
             <Navbar active={activeHeading} />
           </div>
 
           <div className="flex">
-            <div className={`${styles.noramlFlex}`}>
+            <div className="flex items-center">
               <div
                 className="relative cursor-pointer mr-[15px]"
                 onClick={() => setOpenWishlist(true)}
@@ -156,7 +154,7 @@ const Header = ({ activeHeading }) => {
               </div>
             </div>
 
-            <div className={`${styles.noramlFlex}`}>
+            <div className="flex items-center">
               <div
                 className="relative cursor-pointer mr-[15px]"
                 onClick={() => setOpenCart(true)}
@@ -171,7 +169,7 @@ const Header = ({ activeHeading }) => {
               </div>
             </div>
 
-            <div className={`${styles.noramlFlex}`}>
+            <div className="flex items-center">
               <div className="relative cursor-pointer mr-[15px]">
                 {isAuthenticated ? (
                   <Link to="/profile">
@@ -202,9 +200,8 @@ const Header = ({ activeHeading }) => {
 
       {/* mobile header */}
       <div
-        className={`${
-          active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
-        }
+        className={`${active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
+          }
       w-full h-[60px] bg-[#fff] z-50 top-0 left-0 shadow-sm 800px:hidden`}
       >
         <div className="w-full flex items-center justify-between">
@@ -299,7 +296,7 @@ const Header = ({ activeHeading }) => {
               </div>
 
               <Navbar active={activeHeading} />
-              <div className={`${styles.button} ml-4 !rounded-[4px]`}>
+              <div className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer ml-4 !rounded-[4px]'>
                 <Link to="/shop-create">
                   <h1 className="text-[#fff] flex items-center">
                     Become Seller <IoIosArrowForward className="ml-1" />

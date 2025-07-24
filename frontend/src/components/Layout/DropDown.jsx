@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import styles from "../../styles/styles";
 
 const DropDown = ({ categoriesData, setDropDown }) => {
   const navigate = useNavigate();
@@ -14,7 +13,7 @@ const DropDown = ({ categoriesData, setDropDown }) => {
         categoriesData.map((i, index) => (
           <div
             key={index}
-            className={`${styles.noramlFlex}`}
+            className="flex items-center"
             onClick={() => submitHandle(i)}
           >
             <img

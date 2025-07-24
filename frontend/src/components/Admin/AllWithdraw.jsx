@@ -1,11 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { server } from "../../server";
 import { Link } from "react-router-dom";
-import { DataGrid } from "@material-ui/data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { BsPencil } from "react-icons/bs";
 import { RxCross1 } from "react-icons/rx";
-import styles from "../../styles/styles";
 import { toast } from "react-toastify";
 
 const AllWithdraw = () => {
@@ -16,7 +14,7 @@ const AllWithdraw = () => {
 
   useEffect(() => {
     axios
-      .get(`${server}/withdraw/get-all-withdraw-request`, {
+      .get(`/withdraw/get-all-withdraw-request`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -82,7 +80,7 @@ const AllWithdraw = () => {
 
   const handleSubmit = async () => {
     await axios
-      .put(`${server}/withdraw/update-withdraw-request/${withdrawData.id}`,{
+      .put(`/withdraw/update-withdraw-request/${withdrawData.id}`,{
         sellerId: withdrawData.shopId,
       },{withCredentials: true})
       .then((res) => {
@@ -137,7 +135,7 @@ const AllWithdraw = () => {
             </select>
             <button
               type="submit"
-              className={`block ${styles.button} text-white !h-[42px] mt-4 text-[18px]`}
+              className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer block text-white !h-[42px] mt-4 text-[18px]'
               onClick={handleSubmit}
             >
               Update
