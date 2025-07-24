@@ -12,6 +12,9 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.get('/test', (req, res) => {
+  res.send('Server is running perfectly!');
+});
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
