@@ -1,17 +1,14 @@
-const Shop = require("../model/shop");
-const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const express = require("express");
-const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
-const Withdraw = require("../model/withdraw");
-const sendMail = require("../utils/sendMail");
+import Shop from "../model/shop.model.js";
+import { errorHandler } from "../utils/errorHandler.js";
+import catchAsyncError from "../middleware/catchAsyncError.js";
+import express from 'express'
+import { isAuthenticated, isSeller, isAdmin } from '../middleware/auth.js'
+import Withdraw from '../model/withdraw.model.js'
+import sendMail from '../utils/sendMail.js'
+
 const router = express.Router();
 
-// create withdraw request --- only for seller
-router.post(
-  "/create-withdraw-request",
-  isSeller,
-  catchAsyncErrors(async (req, res, next) => {
+router.post("/create-withdraw-request", isSeller, catchAsyncError(async (req, res, next) => {
     try {
       const { amount } = req.body;
 
@@ -30,7 +27,7 @@ router.post(
           success: true,
         });
       } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+        return next(new errorHandler(error.message, 500));
       }
 
       const withdraw = await Withdraw.create(data);
@@ -46,18 +43,13 @@ router.post(
         withdraw,
       });
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      return next(new errorHandler(error.message, 500));
     }
   })
 );
 
-// get all withdraws --- admnin
 
-router.get(
-  "/get-all-withdraw-request",
-  isAuthenticated,
-  isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
+router.get("/get-all-withdraw-request", isAuthenticated, isAdmin("Admin"), catchAsyncError(async (req, res, next) => {
     try {
       const withdraws = await Withdraw.find().sort({ createdAt: -1 });
 
@@ -66,17 +58,13 @@ router.get(
         withdraws,
       });
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      return next(new errorHandler(error.message, 500));
     }
   })
 );
 
-// update withdraw request ---- admin
-router.put(
-  "/update-withdraw-request/:id",
-  isAuthenticated,
-  isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
+router.put( "/update-withdraw-request/:id", isAuthenticated, isAdmin("Admin"),
+  catchAsyncError(async (req, res, next) => {
     try {
       const { sellerId } = req.body;
 
@@ -91,14 +79,14 @@ router.put(
 
       const seller = await Shop.findById(sellerId);
 
-      const transection = {
+      const transaction = {
         _id: withdraw._id,
         amount: withdraw.amount,
         updatedAt: withdraw.updatedAt,
         status: withdraw.status,
       };
 
-      seller.transections = [...seller.transections, transection];
+      seller.transactions = [...seller.transactions, transaction];
 
       await seller.save();
 
@@ -109,14 +97,14 @@ router.put(
           message: `Hello ${seller.name}, Your withdraw request of ${withdraw.amount}$ is on the way. Delivery time depends on your bank's rules it usually takes 3days to 7days.`,
         });
       } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+        return next(new errorHandler(error.message, 500));
       }
       res.status(201).json({
         success: true,
         withdraw,
       });
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      return next(new errorHandler(error.message, 500));
     }
   })
 );

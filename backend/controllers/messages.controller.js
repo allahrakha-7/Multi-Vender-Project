@@ -1,19 +1,18 @@
-const Messages = require("../model/messages");
-const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const express = require("express");
-const cloudinary = require("cloudinary");
+import Messages from '../model/messages.model.js'
+import { errorHandler } from '../utils/errorHandler.js';
+import catchAsyncError from '../middleware/catchAsyncError.js';
+import express from 'express';
+import { v2 as cloudinary } from 'cloudinary';
+
 const router = express.Router();
 
-// create new message
-router.post(
-  "/create-new-message",
-  catchAsyncErrors(async (req, res, next) => {
+
+router.post( "/create-new-message", catchAsyncError(async (req, res, next) => {
     try {
       const messageData = req.body;
 
       if (req.body.images) {
-        const myCloud = await cloudinary.v2.uploader.upload(req.body.images, {
+        const myCloud = await cloudinary.uploader.upload(req.body.images, {
           folder: "messages",
         });
         messageData.images = {
@@ -40,15 +39,13 @@ router.post(
         message,
       });
     } catch (error) {
-      return next(new ErrorHandler(error.message), 500);
+      return next(new errorHandler(error.message), 500);
     }
   })
 );
 
-// get all messages with conversation id
-router.get(
-  "/get-all-messages/:id",
-  catchAsyncErrors(async (req, res, next) => {
+
+router.get( "/get-all-messages/:id", catchAsyncError(async (req, res, next) => {
     try {
       const messages = await Messages.find({
         conversationId: req.params.id,
@@ -59,9 +56,10 @@ router.get(
         messages,
       });
     } catch (error) {
-      return next(new ErrorHandler(error.message), 500);
+      return next(new errorHandler(error.message), 500);
     }
   })
 );
 
-module.exports = router;
+
+export default router;

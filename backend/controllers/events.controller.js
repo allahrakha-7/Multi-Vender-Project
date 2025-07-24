@@ -1,21 +1,20 @@
-const express = require("express");
-const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const Shop = require("../model/shop");
-const Event = require("../model/event");
-const ErrorHandler = require("../utils/ErrorHandler");
-const { isSeller, isAdmin, isAuthenticated } = require("../middleware/auth");
-const router = express.Router();
-const cloudinary = require("cloudinary");
+import express from 'express';
+import catchAsyncError from '../middleware/catchAsyncError.js';
+import Shop from '../model/shop.model.js';
+import Event from '../model/events.model.js'
+import { errorHandler } from '../utils/errorHandler.js';
+import { isAuthenticated, isSeller, isAdmin } from '../middleware/auth.js';
+import { v2 as cloudinary } from 'cloudinary';
 
-// create event
-router.post(
-  "/create-event",
-  catchAsyncErrors(async (req, res, next) => {
+const router = express.Router();
+
+
+router.post( "/create-event", catchAsyncError(async (req, res, next) => {
     try {
       const shopId = req.body.shopId;
       const shop = await Shop.findById(shopId);
       if (!shop) {
-        return next(new ErrorHandler("Shop Id is invalid!", 400));
+        return next(new errorHandler("Shop Id is invalid!", 400));
       } else {
         let images = [];
 
@@ -28,7 +27,7 @@ router.post(
         const imagesLinks = [];
 
         for (let i = 0; i < images.length; i++) {
-          const result = await cloudinary.v2.uploader.upload(images[i], {
+          const result = await cloudinary.uploader.upload(images[i], {
             folder: "products",
           });
 
@@ -50,13 +49,13 @@ router.post(
         });
       }
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new errorHandler(error, 400));
     }
   })
 );
 
-// get all events
-router.get("/get-all-events", async (req, res, next) => {
+
+router.get("/get-all-events", catchAsyncError(async (req, res, next) => {
   try {
     const events = await Event.find();
     res.status(201).json({
@@ -64,14 +63,12 @@ router.get("/get-all-events", async (req, res, next) => {
       events,
     });
   } catch (error) {
-    return next(new ErrorHandler(error, 400));
+    return next(new errorHandler(error, 400));
   }
-});
+}));
 
-// get all events of a shop
-router.get(
-  "/get-all-events/:id",
-  catchAsyncErrors(async (req, res, next) => {
+
+router.get( "/get-all-events/:id", catchAsyncError(async (req, res, next) => {
     try {
       const events = await Event.find({ shopId: req.params.id });
 
@@ -80,24 +77,22 @@ router.get(
         events,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new errorHandler(error, 400));
     }
   })
 );
 
-// delete event of a shop
-router.delete(
-  "/delete-shop-event/:id",
-  catchAsyncErrors(async (req, res, next) => {
+
+router.delete( "/delete-shop-event/:id", catchAsyncError(async (req, res, next) => {
     try {
       const event = await Event.findById(req.params.id);
 
       if (!product) {
-        return next(new ErrorHandler("Product is not found with this id", 404));
+        return next(new errorHandler("Product is not found with this id", 404));
       }    
 
       for (let i = 0; 1 < product.images.length; i++) {
-        const result = await cloudinary.v2.uploader.destroy(
+        const result = await cloudinary.uploader.destroy(
           event.images[i].public_id
         );
       }
@@ -109,17 +104,13 @@ router.delete(
         message: "Event Deleted successfully!",
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new errorHandler(error, 400));
     }
   })
 );
 
-// all events --- for admin
-router.get(
-  "/admin-all-events",
-  isAuthenticated,
-  isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
+
+router.get( "/admin-all-events", isAuthenticated, isAdmin("Admin"), catchAsyncError(async (req, res, next) => {
     try {
       const events = await Event.find().sort({
         createdAt: -1,
@@ -129,9 +120,10 @@ router.get(
         events,
       });
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      return next(new errorHandler(error.message, 500));
     }
   })
 );
 
-module.exports = router;
+
+export default router;

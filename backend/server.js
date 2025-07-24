@@ -1,5 +1,5 @@
 // import { app } from './app.js';
-// import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 
 // process.on("uncaughtException", (err) => {
@@ -47,8 +47,10 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
-// connect db
-connectDatabase();
+mongoose.connect(process.env.MONGO, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log('Connected to MongoDB!')).catch((err) => console.log(err));
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
