@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const coupounCodeSchema = new mongoose.Schema({
     name:{
@@ -29,4 +29,6 @@ const coupounCodeSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("CoupounCode", coupounCodeSchema);
+const CoupounCode = mongoose.model("CoupounCode", coupounCodeSchema);
+
+export default CoupounCode;

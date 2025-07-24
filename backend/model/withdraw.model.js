@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const withdrawSchema = new mongoose.Schema({
   seller: {
@@ -22,4 +22,6 @@ const withdrawSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("Withdraw", withdrawSchema);
+const Withdraw = mongoose.model("Withdraw", withdrawSchema);
+
+export default Withdraw;
