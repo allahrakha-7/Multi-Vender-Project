@@ -47,8 +47,7 @@ export const updateUserInformation =
         type: "updateUserInfoRequest",
       });
 
-      const { data } = await axios.put(
-        `/user/update-user-info`,
+      const { data } = await axios.put(`/user/update-user-info`,
         {
           email,
           password,
@@ -77,39 +76,39 @@ export const updateUserInformation =
 
 export const updatUserAddress =
   (country, city, address1, address2, zipCode, addressType) =>
-  async (dispatch) => {
-    try {
-      dispatch({
-        type: "updateUserAddressRequest",
-      });
+    async (dispatch) => {
+      try {
+        dispatch({
+          type: "updateUserAddressRequest",
+        });
 
-      const { data } = await axios.put(
-        `/user/update-user-addresses`,
-        {
-          country,
-          city,
-          address1,
-          address2,
-          zipCode,
-          addressType,
-        },
-        { withCredentials: true }
-      );
+        const { data } = await axios.put(
+          `/user/update-user-addresses`,
+          {
+            country,
+            city,
+            address1,
+            address2,
+            zipCode,
+            addressType,
+          },
+          { withCredentials: true }
+        );
 
-      dispatch({
-        type: "updateUserAddressSuccess",
-        payload: {
-          successMessage: "User address updated succesfully!",
-          user: data.user,
-        },
-      });
-    } catch (error) {
-      dispatch({
-        type: "updateUserAddressFailed",
-        payload: error.response.data.message,
-      });
-    }
-  };
+        dispatch({
+          type: "updateUserAddressSuccess",
+          payload: {
+            successMessage: "User address updated succesfully!",
+            user: data.user,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "updateUserAddressFailed",
+          payload: error.response.data.message,
+        });
+      }
+    };
 
 export const deleteUserAddress = (id) => async (dispatch) => {
   try {
