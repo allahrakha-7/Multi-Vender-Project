@@ -11,9 +11,10 @@ body {
     scroll-behavior: smooth;
 }
 
-input,select{
+input, select{
   outline: none;
 }
+
 .batch_heart{
   background: tomato;
   width: 15px;
@@ -27,6 +28,7 @@ input,select{
   top: -9%;
   cursor: pointer;
 }
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

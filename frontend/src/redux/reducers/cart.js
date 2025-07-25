@@ -6,8 +6,8 @@ const initialState = {
     : [],
 };
 
-export const cartReducer = createReducer(initialState, {
-  addToCart: (state, action) => {
+export const cartReducer = createReducer(initialState, (builder) => {
+  builder.addCase("addToCart", (state, action) => {
     const item = action.payload;
     const isItemExist = state.cart.find((i) => i._id === item._id);
     if (isItemExist) {
@@ -21,12 +21,11 @@ export const cartReducer = createReducer(initialState, {
         cart: [...state.cart, item],
       };
     }
-  },
-
-  removeFromCart: (state, action) => {
-    return {
-      ...state,
-      cart: state.cart.filter((i) => i._id !== action.payload),
-    };
-  },
+  })
+    .addCase("removeFromCart", (state, action) => {
+      return {
+        ...state,
+        cart: state.cart.filter((i) => i._id !== action.payload),
+      };
+    });
 });

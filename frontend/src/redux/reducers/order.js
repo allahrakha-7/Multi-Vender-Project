@@ -4,44 +4,42 @@ const initialState = {
   isLoading: true,
 };
 
-export const orderReducer = createReducer(initialState, {
-  getAllOrdersUserRequest: (state) => {
+export const orderReducer = createReducer(initialState, (builder) => {
+  builder
+  .addCase("getAllOrdersUserRequest", (state) => {
     state.isLoading = true;
-  },
-  getAllOrdersUserSuccess: (state, action) => {
+  })
+  .addCase("getAllOrdersUserSuccess", (state, action) => {
     state.isLoading = false;
     state.orders = action.payload;
-  },
-  getAllOrdersUserFailed: (state, action) => {
+  })
+  .addCase("getAllOrdersUserFailed", (state, action) => {
     state.isLoading = false;
     state.error = action.payload;
-  },
-  
-  getAllOrdersShopRequest: (state) => {
+  })
+  .addCase("getAllOrdersShopRequest", (state) => {
     state.isLoading = true;
-  },
-  getAllOrdersShopSuccess: (state, action) => {
+  })
+  .addCase("getAllOrdersShopSuccess", (state, action) => {
     state.isLoading = false;
     state.orders = action.payload;
-  },
-  getAllOrdersShopFailed: (state, action) => {
+  })
+  .addCase("getAllOrdersShopFailed", (state, action) => {
     state.isLoading = false;
     state.error = action.payload;
-  },
-
-  adminAllOrdersRequest: (state) => {
+  })
+  .addCase("adminAllOrdersRequest", (state) => {
     state.adminOrderLoading = true;
-  },
-  adminAllOrdersSuccess: (state, action) => {
+  })
+  .addCase("adminAllOrdersSuccess", (state, action) => {
     state.adminOrderLoading = false;
     state.adminOrders = action.payload;
-  },
-  adminAllOrdersFailed: (state, action) => {
+  })
+  .addCase("adminAllOrdersFailed", (state, action) => {
     state.adminOrderLoading = false;
     state.error = action.payload;
-  },
-
-  clearErrors: (state) => {
+  })
+  .addCase("clearErrors", (state) => {
     state.error = null;
-  },
+  });
 });

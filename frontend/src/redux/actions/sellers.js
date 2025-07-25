@@ -14,11 +14,10 @@ export const getAllSellers = () => async (dispatch) => {
       type: "getAllSellersSuccess",
       payload: data.sellers,
     });
-  // eslint-disable-next-line no-unused-vars
   } catch (error) {
     dispatch({
       type: "getAllSellerFailed",
-    //   payload: error.response.data.message,
+      payload: error.response.data.message,
     });
   }
 };

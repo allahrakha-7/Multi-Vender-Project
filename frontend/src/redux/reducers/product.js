@@ -4,58 +4,55 @@ const initialState = {
   isLoading: true,
 };
 
-export const productReducer = createReducer(initialState, {
-  productCreateRequest: (state) => {
+export const productReducer = createReducer(initialState, (builder) => {
+  builder
+  .addCase("productCreateRequest", (state) => {
     state.isLoading = true;
-  },
-  productCreateSuccess: (state, action) => {
+  })
+  .addCase("productCreateSuccess", (state, action) => {
     state.isLoading = false;
     state.product = action.payload;
     state.success = true;
-  },
-  productCreateFail: (state, action) => {
+  })
+  .addCase("productCreateFail", (state, action) => {
     state.isLoading = false;
     state.error = action.payload;
     state.success = false;
-  },
-
-  getAllProductsShopRequest: (state) => {
+  })
+  .addCase("getAllProductsShopRequest", (state) => {
     state.isLoading = true;
-  },
-  getAllProductsShopSuccess: (state, action) => {
+  })
+  .addCase("getAllProductsShopSuccess", (state, action) => {
     state.isLoading = false;
     state.products = action.payload;
-  },
-  getAllProductsShopFailed: (state, action) => {
+  })
+  .addCase("getAllProductsShopFailed", (state, action) => {
     state.isLoading = false;
     state.error = action.payload;
-  },
-
-  deleteProductRequest: (state) => {
+  })
+  .addCase("deleteProductRequest", (state) => {
     state.isLoading = true;
-  },
-  deleteProductSuccess: (state, action) => {
+  })
+  .addCase("deleteProductSuccess", (state, action) => {
     state.isLoading = false;
     state.message = action.payload;
-  },
-  deleteProductFailed: (state, action) => {
+  })
+  .addCase("deleteProductFailed", (state, action) => {
     state.isLoading = false;
     state.error = action.payload;
-  },
-
-  getAllProductsRequest: (state) => {
+  })
+  .addCase("getAllProductsRequest", (state) => {
     state.isLoading = true;
-  },
-  getAllProductsSuccess: (state, action) => {
+  })
+  .addCase("getAllProductsSuccess", (state, action) => {
     state.isLoading = false;
     state.allProducts = action.payload;
-  },
-  getAllProductsFailed: (state, action) => {
+  })
+  .addCase("getAllProductsFailed", (state, action) => {
     state.isLoading = false;
     state.error = action.payload;
-  },
-  
-  clearErrors: (state) => {
+  })
+  .addCase("clearErrors", (state) => {
     state.error = null;
-  },
+  });
 });

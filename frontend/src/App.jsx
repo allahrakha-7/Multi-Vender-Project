@@ -56,7 +56,7 @@ import axios from "axios";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-function App () {
+function App() {
   const [stripeApikey, setStripeApiKey] = useState("");
 
   async function getStripeApikey() {
@@ -117,7 +117,7 @@ function App () {
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfilePage/>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
