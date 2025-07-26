@@ -92,7 +92,7 @@ const AdminDashboardMain = () => {
                 fill="#00000085"
               />
               <h3
-                className='text-[25px] font-[600] font-Roboto text-[#333] !text-[18px] leading-5 !font-[400] text-[#00000085]'
+                className='text-[25px] font-[600] font-Roboto text-[#333]  leading-5'
               >
                 Total Earning
               </h3>
@@ -104,7 +104,7 @@ const AdminDashboardMain = () => {
             <div className="flex items-center">
               <MdBorderClear size={30} className="mr-2" fill="#00000085" />
               <h3
-                className='text-[25px] font-[600] font-Roboto text-[#333] !text-[18px] leading-5 !font-[400] text-[#00000085]'                
+                className='text-[25px] font-[600] font-Roboto leading-5 text-[#00000085]'                
               >
                 All Sellers
               </h3>
@@ -123,7 +123,7 @@ const AdminDashboardMain = () => {
                 fill="#00000085"
               />
               <h3
-                className='text-[25px] font-[600] font-Roboto text-[#333] !text-[18px] leading-5 !font-[400] text-[#00000085]'                
+                className='text-[25px] font-[600] font-Roboto leading-5 text-[#00000085]'                
               >
                 All Orders
               </h3>

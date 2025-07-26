@@ -296,7 +296,7 @@ const Header = ({ activeHeading }) => {
               </div>
 
               <Navbar active={activeHeading} />
-              <div className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer ml-4 !rounded-[4px]'>
+              <div className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer ml-4'>
                 <Link to="/shop-create">
                   <h1 className="text-[#fff] flex items-center">
                     Become Seller <IoIosArrowForward className="ml-1" />

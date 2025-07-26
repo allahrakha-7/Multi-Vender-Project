@@ -5,10 +5,9 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
-// import socketIO from "socket.io-client";
+import { io } from "socket.io-client";
 import { format } from "timeago.js";
-// const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
-// const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
+const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
 
 const DashboardMessages = () => {
   const { seller,isLoading } = useSelector((state) => state.seller);
@@ -24,16 +23,48 @@ const DashboardMessages = () => {
   const [images, setImages] = useState();
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
+  
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    socketId.on("getMessage", (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
-  }, []);
+    if (seller && !socketRef.current) {
+      try {
+        socketRef.current = io(ENDPOINT, {
+          transports: ["websocket", "polling"],
+          timeout: 20000,
+          reconnection: true,
+          reconnectionDelay: 1000,
+          reconnectionAttempts: 5
+        });
+
+        socketRef.current.on("connect", () => {
+          console.log("Socket connected successfully");
+        });
+
+        socketRef.current.on("connect_error", (error) => {
+          console.error("Socket connection error:", error);
+        });
+
+        socketRef.current.on("getMessage", (data) => {
+          setArrivalMessage({
+            sender: data.senderId,
+            text: data.text,
+            createdAt: Date.now(),
+          });
+        });
+
+      } catch (error) {
+        console.error("Socket initialization error:", error);
+      }
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, [seller]);
 
   useEffect(() => {
     arrivalMessage &&
@@ -45,7 +76,7 @@ const DashboardMessages = () => {
     const getConversation = async () => {
       try {
         const resonse = await axios.get(
-          `/conversation/get-all-conversation-seller/${seller?._id}`,
+          `${ENDPOINT}api/v2/conversation/get-all-conversation-seller/${seller?._id}`,
           {
             withCredentials: true,
           }
@@ -61,10 +92,10 @@ const DashboardMessages = () => {
   }, [seller, messages]);
 
   useEffect(() => {
-    if (seller) {
+    if (seller && socketRef.current) {
       const sellerId = seller?._id;
-      socketId.emit("addUser", sellerId);
-      socketId.on("getUsers", (data) => {
+      socketRef.current.emit("addUser", sellerId);
+      socketRef.current.on("getUsers", (data) => {
         setOnlineUsers(data);
       });
     }
@@ -77,12 +108,11 @@ const DashboardMessages = () => {
     return online ? true : false;
   };
 
-  // get messages
   useEffect(() => {
     const getMessage = async () => {
       try {
         const response = await axios.get(
-          `/message/get-all-messages/${currentChat?._id}`
+          `${ENDPOINT}api/v2/message/get-all-messages/${currentChat?._id}`
         );
         setMessages(response.data.messages);
       } catch (error) {
@@ -92,7 +122,6 @@ const DashboardMessages = () => {
     getMessage();
   }, [currentChat]);
 
-  // create new message
   const sendMessageHandler = async (e) => {
     e.preventDefault();
 
@@ -103,19 +132,21 @@ const DashboardMessages = () => {
     };
 
     const receiverId = currentChat.members.find(
-      (member) => member.id !== seller._id
+      (member) => member !== seller._id
     );
 
-    socketId.emit("sendMessage", {
-      senderId: seller._id,
-      receiverId,
-      text: newMessage,
-    });
+    if (socketRef.current) {
+      socketRef.current.emit("sendMessage", {
+        senderId: seller._id,
+        receiverId,
+        text: newMessage,
+      });
+    }
 
     try {
       if (newMessage !== "") {
         await axios
-          .post(`/message/create-new-message`, message)
+          .post(`${ENDPOINT}api/v2/message/create-new-message`, message)
           .then((res) => {
             setMessages([...messages, res.data.message]);
             updateLastMessage();
@@ -130,13 +161,15 @@ const DashboardMessages = () => {
   };
 
   const updateLastMessage = async () => {
-    socketId.emit("updateLastMessage", {
-      lastMessage: newMessage,
-      lastMessageId: seller._id,
-    });
+    if (socketRef.current) {
+      socketRef.current.emit("updateLastMessage", {
+        lastMessage: newMessage,
+        lastMessageId: seller._id,
+      });
+    }
 
     await axios
-      .put(`/conversation/update-last-message/${currentChat._id}`, {
+      .put(`${ENDPOINT}api/v2/conversation/update-last-message/${currentChat._id}`, {
         lastMessage: newMessage,
         lastMessageId: seller._id,
       })
@@ -167,15 +200,17 @@ const DashboardMessages = () => {
       (member) => member !== seller._id
     );
 
-    socketId.emit("sendMessage", {
-      senderId: seller._id,
-      receiverId,
-      images: e,
-    });
+    if (socketRef.current) {
+      socketRef.current.emit("sendMessage", {
+        senderId: seller._id,
+        receiverId,
+        images: e,
+      });
+    }
 
     try {
       await axios
-        .post(`/message/create-new-message`, {
+        .post(`${ENDPOINT}api/v2/message/create-new-message`, {
           images: e,
           sender: seller._id,
           text: newMessage,
@@ -193,7 +228,7 @@ const DashboardMessages = () => {
 
   const updateLastMessageForImage = async () => {
     await axios.put(
-      `/conversation/update-last-message/${currentChat._id}`,
+      `${ENDPOINT}api/v2/conversation/update-last-message/${currentChat._id}`,
       {
         lastMessage: "Photo",
         lastMessageId: seller._id,
@@ -276,7 +311,7 @@ const MessageList = ({
 
     const getUser = async () => {
       try {
-        const res = await axios.get(`/user/user-info/${userId}`);
+        const res = await axios.get(`${ENDPOINT}api/v2/user/user-info/${userId}`);
         setUser(res.data.user);
       } catch (error) {
         console.log(error);
@@ -359,10 +394,10 @@ const SellerInbox = ({
 
       <div className="px-3 h-[65vh] py-3 overflow-y-scroll">
         {messages &&
-          // eslint-disable-next-line no-unused-vars
           messages.map((item, index) => {
             return (
               <div
+                key={index}
                 className={`flex w-full my-2 ${
                   item.sender === sellerId ? "justify-end" : "justify-start"
                 }`}
@@ -379,6 +414,7 @@ const SellerInbox = ({
                   <img
                     src={`${item.images?.url}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] mr-2"
+                    alt=""
                   />
                 )}
                 {item.text !== "" && (
@@ -401,7 +437,6 @@ const SellerInbox = ({
           })}
       </div>
 
-      {/* send message input */}
       <form
         aria-required={true}
         className="p-3 relative w-full flex justify-between items-center"

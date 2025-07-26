@@ -98,7 +98,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   </Link>
                 </div>
                 <div
-                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer bg-[#000] mt-4 rounded-[4px] h-11'
+                  className='w-[150px my-3 flex items-center justify-center rounded-xl cursor-pointer bg-[#000] mt-4 h-11'
                   onClick={handleMessageSubmit}
                 >
                   <span className="text-[#fff] flex items-center">
@@ -109,7 +109,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
               </div>
 
               <div className="w-full 800px:w-[50%] pt-5 pl-[5px] pr-[5px]">
-                <h1 className='text-[25px] font-[600] font-Roboto text-[#333] text-[20px]'>
+                <h1 className='text-[25px] font-[600] font-Roboto text-[#333]'>
                   {data.name}
                 </h1>
                 <p>{data.description}</p>
@@ -160,7 +160,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   </div>
                 </div>
                 <div
-                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer mt-6 rounded-[4px] h-11 flex items-center'
+                  className='w-[150px] bg-black my-3 justify-center rounded-xl cursor-pointer mt-6 h-11 flex items-center'
                   onClick={() => addToCartHandler(data._id)}
                 >
                   <span className="text-[#fff] flex items-center">

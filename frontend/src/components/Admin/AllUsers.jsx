@@ -116,13 +116,13 @@ const AllUsers = () => {
               </h3>
               <div className="w-full flex items-center justify-center">
                 <div
-                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white text-[18px] !h-[42px] mr-4'
+                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white text-[18px] mr-4'
                   onClick={() => setOpen(false)}
                 >
                   cancel
                 </div>
                 <div
-                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white text-[18px] !h-[42px] mr-4'                  
+                  className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white text-[18px] mr-4'                  
                   onClick={() =>  setOpen(false) || handleDelete(userId)}
                 >
                   confirm

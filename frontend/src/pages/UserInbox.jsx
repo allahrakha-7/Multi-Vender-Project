@@ -1,51 +1,82 @@
 import { useEffect, useRef, useState } from "react";
 import Header from "../components/Layout/Header";
 import { useSelector } from "react-redux";
-// import socketIO from "socket.io-client";
+import socketIO from 'socket.io-client';
 import { format } from "timeago.js";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
-// const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
-// const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
+const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
 
 const UserInbox = () => {
   const { user,loading } = useSelector((state) => state.user);
   const [conversations, setConversations] = useState([]);
-  // const [arrivalMessage, setArrivalMessage] = useState(null);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
   const [currentChat, setCurrentChat] = useState();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
-  // const [onlineUsers, setOnlineUsers] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [images, setImages] = useState();
   const [activeStatus, setActiveStatus] = useState(false);
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
+  
+  const socketRef = useRef(null);
 
-  // useEffect(() => {
-  //   socketId.on("getMessage", (data) => {
-  //     setArrivalMessage({
-  //       sender: data.senderId,
-  //       text: data.text,
-  //       createdAt: Date.now(),
-  //     });
-  //   });
-  // }, []);
+  useEffect(() => {
+    if (user && !socketRef.current) {
+      try {
+        socketRef.current = socketIO(ENDPOINT, { 
+          transports: ["websocket", "polling"],
+          timeout: 20000,
+          reconnection: true,
+          reconnectionDelay: 1000,
+          reconnectionAttempts: 5
+        });
 
-  // useEffect(() => {
-  //   arrivalMessage &&
-  //     currentChat?.members.includes(arrivalMessage.sender) &&
-  //     setMessages((prev) => [...prev, arrivalMessage]);
-  // }, [arrivalMessage, currentChat]);
+        socketRef.current.on("connect", () => {
+          console.log("Socket connected successfully");
+        });
+
+        socketRef.current.on("connect_error", (error) => {
+          console.error("Socket connection error:", error);
+        });
+
+        socketRef.current.on("getMessage", (data) => {
+          setArrivalMessage({
+            sender: data.senderId,
+            text: data.text,
+            createdAt: Date.now(),
+          });
+        });
+
+      } catch (error) {
+        console.error("Socket initialization error:", error);
+      }
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, [user]);
+
+  useEffect(() => {
+    arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.sender) &&
+      setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
     const getConversation = async () => {
       try {
         const resonse = await axios.get(
-          `/conversation/get-all-conversation-user/${user?._id}`,
+          `${ENDPOINT}api/v2/conversation/get-all-conversation-user/${user?._id}`,
           {
             withCredentials: true,
           }
@@ -59,28 +90,28 @@ const UserInbox = () => {
     getConversation();
   }, [user, messages]);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     const sellerId = user?._id;
-  //     socketId.emit("addUser", sellerId);
-  //     socketId.on("getUsers", (data) => {
-  //       setOnlineUsers(data);
-  //     });
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (user && socketRef.current) {
+      const sellerId = user?._id;
+      socketRef.current.emit("addUser", sellerId);
+      socketRef.current.on("getUsers", (data) => {
+        setOnlineUsers(data);
+      });
+    }
+  }, [user]);
 
-  // const onlineCheck = (chat) => {
-  //   const chatMembers = chat.members.find((member) => member !== user?._id);
-  //   const online = onlineUsers.find((user) => user.userId === chatMembers);
+  const onlineCheck = (chat) => {
+    const chatMembers = chat.members.find((member) => member !== user?._id);
+    const online = onlineUsers.find((user) => user.userId === chatMembers);
 
-  //   return online ? true : false;
-  // };
+    return online ? true : false;
+  };
 
   useEffect(() => {
     const getMessage = async () => {
       try {
         const response = await axios.get(
-          `/message/get-all-messages/${currentChat?._id}`
+          `${ENDPOINT}api/v2/message/get-all-messages/${currentChat?._id}`
         );
         setMessages(response.data.messages);
       } catch (error) {
@@ -98,23 +129,25 @@ const UserInbox = () => {
       text: newMessage,
       conversationId: currentChat._id,
     };
-    // const receiverId = currentChat.members.find(
-    //   (member) => member !== user?._id
-    // );
+    const receiverId = currentChat.members.find(
+      (member) => member !== user?._id
+    );
 
-    // socketId.emit("sendMessage", {
-    //   senderId: user?._id,
-    //   receiverId,
-    //   text: newMessage,
-    // });
+    if (socketRef.current) {
+      socketRef.current.emit("sendMessage", {
+        senderId: user?._id,
+        receiverId,
+        text: newMessage,
+      });
+    }
 
     try {
       if (newMessage !== "") {
         await axios
-          .post(`/message/create-new-message`, message)
+          .post(`${ENDPOINT}api/v2/message/create-new-message`, message)
           .then((res) => {
             setMessages([...messages, res.data.message]);
-            // updateLastMessage();
+            updateLastMessage();
           })
           .catch((error) => {
             console.log(error);
@@ -125,25 +158,27 @@ const UserInbox = () => {
     }
   };
 
-  // const updateLastMessage = async () => {
-  //   socketId.emit("updateLastMessage", {
-  //     lastMessage: newMessage,
-  //     lastMessageId: user._id,
-  //   });
+  const updateLastMessage = async () => {
+    if (socketRef.current) {
+      socketRef.current.emit("updateLastMessage", {
+        lastMessage: newMessage,
+        lastMessageId: user._id,
+      });
+    }
 
-  //   await axios
-  //     .put(`/conversation/update-last-message/${currentChat._id}`, {
-  //       lastMessage: newMessage,
-  //       lastMessageId: user._id,
-  //     })
-  //     // eslint-disable-next-line no-unused-vars
-  //     .then((res) => {
-  //       setNewMessage("");
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+    await axios
+      .put(`${ENDPOINT}api/v2/conversation/update-last-message/${currentChat._id}`, {
+        lastMessage: newMessage,
+        lastMessageId: user._id,
+      })
+      // eslint-disable-next-line no-unused-vars
+      .then((res) => {
+        setNewMessage("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleImageUpload = async (e) => {
     const reader = new FileReader();
@@ -160,20 +195,22 @@ const UserInbox = () => {
 
   const imageSendingHandler = async (e) => {
 
-    // const receiverId = currentChat.members.find(
-    //   (member) => member !== user._id
-    // );
+    const receiverId = currentChat.members.find(
+      (member) => member !== user._id
+    );
 
-    // socketId.emit("sendMessage", {
-    //   senderId: user._id,
-    //   receiverId,
-    //   images: e,
-    // });
+    if (socketRef.current) {
+      socketRef.current.emit("sendMessage", {
+        senderId: user._id,
+        receiverId,
+        images: e,
+      });
+    }
 
     try {
       await axios
         .post(
-          `/message/create-new-message`,
+          `${ENDPOINT}api/v2/message/create-new-message`,
           {
             images: e,
             sender: user._id,
@@ -193,7 +230,7 @@ const UserInbox = () => {
 
   const updateLastMessageForImage = async () => {
     await axios.put(
-      `/conversation/update-last-message/${currentChat._id}`,
+      `${ENDPOINT}api/v2/conversation/update-last-message/${currentChat._id}`,
       {
         lastMessage: "Photo",
         lastMessageId: user._id,
@@ -224,7 +261,7 @@ const UserInbox = () => {
                 me={user?._id}
                 setUserData={setUserData}
                 userData={userData}
-                // online={onlineCheck(item)}
+                online={onlineCheck(item)}
                 setActiveStatus={setActiveStatus}
                 loading={loading}
               />
@@ -274,7 +311,7 @@ const MessageList = ({
     const userId = data.members.find((user) => user !== me);
     const getUser = async () => {
       try {
-        const res = await axios.get(`/shop/get-shop-info/${userId}`);
+        const res = await axios.get(`${ENDPOINT}api/v2/shop/get-shop-info/${userId}`);
         setUser(res.data.shop);
       } catch (error) {
         console.log(error);
@@ -356,13 +393,13 @@ const SellerInbox = ({
 
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
         {messages &&
-          // eslint-disable-next-line no-unused-vars
           messages.map((item, index) => (
             <div
               className={`flex w-full my-2 ${
                 item.sender === sellerId ? "justify-end" : "justify-start"
               }`}
               ref={scrollRef}
+              key={index}
             >
               {item.sender !== sellerId && (
                 <img
@@ -375,6 +412,7 @@ const SellerInbox = ({
                 <img
                   src={`${item.images?.url}`}
                   className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
+                  alt=""
                 />
               )}
               {item.text !== "" && (

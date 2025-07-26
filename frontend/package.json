@@ -21,6 +21,7 @@
     "@stripe/stripe-js": "^7.6.1",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
+    "buffer": "^6.0.3",
     "country-state-city": "^3.2.1",
     "endpoint": "^0.4.5",
     "react": "^19.1.0",

@@ -9,7 +9,7 @@ const Hero = () => {
           "url(https://themes.rslahmed.dev/rafcart/assets/images/banner-2.jpg)",
       }}
     >
-      <div className='w-11/12 mx-auto w-[90%] 800px:w-[60%]'>
+      <div className='w-11/12 mx-aut  800px:w-[60%]'>
         <h1
           className={`text-[35px] leading-[1.2] 800px:text-[60px] text-[#3d3a3a] font-[600] capitalize`}
         >

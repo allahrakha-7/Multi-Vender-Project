@@ -133,7 +133,7 @@ const Checkout = () => {
         </div>
       </div>
       <div
-        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer w-[150px] 800px:w-[280px] mt-10'
+        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer 800px:w-[280px] mt-10'
         onClick={paymentSubmit}
       >
         <h5 className="text-white">Go to Payment</h5>

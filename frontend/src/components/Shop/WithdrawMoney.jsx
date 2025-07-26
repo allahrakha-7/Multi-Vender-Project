@@ -109,7 +109,7 @@ const WithdrawMoney = () => {
           Available Balance: ${availableBalance}
         </h5>
         <div
-          className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white !h-[42px] !rounded'
+          className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white'
           onClick={() => (availableBalance < 50 ? error() : setOpen(true))}
         >
           Withdraw
@@ -303,7 +303,7 @@ const WithdrawMoney = () => {
                         className="800px:w-[100px] w-[full] border 800px:mr-3 p-1 rounded"
                       />
                       <div
-                        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer !h-[42px] text-white'
+                        className='w-[150px] bg-black h-[50px] my-3 flex items-center justify-center rounded-xl cursor-pointer text-white'
                         onClick={withdrawHandler}
                       >
                         Withdraw

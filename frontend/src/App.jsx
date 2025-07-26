@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage'
-import SignUpPage from './pages/SignUpPage';
+import SignIn from './pages/SignIn'
+import SignUp from './pages/SignUp'
+import UpdatePassword from './pages/UpdatePassword';
 import ActivationPage from "./pages/ActivationPage";
-import HomePage from "./pages/HomePage";
+import Home from "./pages/Home";
 import ProductsPage from "./pages/ProductsPage";
 import BestSellingPage from "./pages/BestSellingPage";
 import EventsPage from "./pages/EventsPage";
@@ -15,9 +16,9 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ProfilePage from "./pages/ProfilePage";
 import ShopCreate from "./pages/ShopCreate";
 import SellerActivationPage from "./pages/SellerActivationPage";
-import ShopLoginPage from "./pages/ShopLoginPage";
+import ShopLogin from "./pages/ShopLogin";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
-import TrackOrderPage from "./pages/TrackOrderPage";
+import TrackOrder from "./pages/TrackOrder";
 import UserInbox from "./pages/UserInbox";
 
 import ShopDashboardPage from "./pages/Shop/ShopDashboardPage";
@@ -88,9 +89,10 @@ function App() {
         </Elements>
       )}
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/sign-up' element={<SignUpPage />} />
+        <Route path="/" element={<Home />} />
+        <Route path='/login' element={<SignIn />} />
+        <Route path='/sign-up' element={<SignUp />} />
+        <Route path='/update-password' element={<UpdatePassword />} />
         <Route
           path="/activation/:activation_token"
           element={<ActivationPage />}
@@ -141,13 +143,13 @@ function App() {
           path="/user/track/order/:id"
           element={
             <ProtectedRoute>
-              <TrackOrderPage />
+              <TrackOrder />
             </ProtectedRoute>
           }
         />
         <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         <Route path="/shop-create" element={<ShopCreate />} />
-        <Route path="/shop-login" element={<ShopLoginPage />} />
+        <Route path="/shop-login" element={<ShopLogin />} />
         <Route
           path="/shop/:id"
           element={

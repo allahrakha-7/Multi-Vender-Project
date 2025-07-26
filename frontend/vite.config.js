@@ -8,4 +8,10 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['socket.io-client']
+  }
 })
