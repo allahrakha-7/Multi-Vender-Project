@@ -8,9 +8,20 @@ dotenv.config({ path: "./.env" });
 
 const app = express();
 const server = http.createServer(app);
-const io = new socketIO(server);
 
-app.use(cors());
+const io = new socketIO(server, {
+    cors: {
+        origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+});
+
+app.use(cors({
+    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],
+    credentials: true
+}));
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -42,11 +53,12 @@ const createMessage = ({ senderId, receiverId, text, images }) => ({
 const messages = {};
 
 io.on("connection", (socket) => {
-    console.log(`a user is connected`);
+    console.log(`User connected: ${socket.id}`);
 
     socket.on("addUser", (userId) => {
         addUser(userId, socket.id);
         io.emit("getUsers", users);
+        console.log(`👤 User added: ${userId}`);
     });
 
     socket.on("sendMessage", ({ senderId, receiverId, text, images }) => {
@@ -60,7 +72,10 @@ io.on("connection", (socket) => {
             messages[receiverId].push(message);
         }
 
-        io.to(user?.socketId).emit("getMessage", message);
+        if (user?.socketId) {
+            io.to(user.socketId).emit("getMessage", message);
+            console.log(`💬 Message sent from ${senderId} to ${receiverId}`);
+        }
     });
 
     socket.on("messageSeen", ({ senderId, receiverId, messageId }) => {
@@ -73,7 +88,9 @@ io.on("connection", (socket) => {
             if (message) {
                 message.seen = true;
 
-                io.to(user?.socketId).emit("messageSeen", { senderId, receiverId, messageId });
+                if (user?.socketId) {
+                    io.to(user.socketId).emit("messageSeen", { senderId, receiverId, messageId });
+                }
             }
         }
     });
@@ -86,12 +103,14 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log(`a user disconnected!`);
+        console.log(`User disconnected: ${socket.id}`);
         removeUser(socket.id);
         io.emit("getUsers", users);
     });
 });
 
-server.listen(process.env.PORT || 4000, () => {
-    console.log(`server is running on port ${process.env.PORT || 4000}`);
+const PORT = process.env.PORT || 4000;
+
+server.listen(PORT, () => {
+    console.log(`Socket server running on port ${PORT}`);
 });

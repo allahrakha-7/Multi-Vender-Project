@@ -7,7 +7,8 @@ import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
 import { io } from "socket.io-client";
 import { format } from "timeago.js";
-const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
+const ENDPOINT = "http://localhost:8000/";
+const SOCKET_ENDPOINT = "http://localhost:4000/";
 
 const DashboardMessages = () => {
   const { seller,isLoading } = useSelector((state) => state.seller);
@@ -24,12 +25,14 @@ const DashboardMessages = () => {
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
   
+  // ✅ Socket connection setup
   const socketRef = useRef(null);
 
+  // ✅ Initialize socket properly
   useEffect(() => {
     if (seller && !socketRef.current) {
       try {
-        socketRef.current = io(ENDPOINT, {
+        socketRef.current = io(SOCKET_ENDPOINT, {
           transports: ["websocket", "polling"],
           timeout: 20000,
           reconnection: true,
@@ -76,7 +79,7 @@ const DashboardMessages = () => {
     const getConversation = async () => {
       try {
         const resonse = await axios.get(
-          `${ENDPOINT}api/v2/conversation/get-all-conversation-seller/${seller?._id}`,
+          `${ENDPOINT}api/v1/conversation/get-all-conversation-seller/${seller?._id}`,
           {
             withCredentials: true,
           }
@@ -108,11 +111,12 @@ const DashboardMessages = () => {
     return online ? true : false;
   };
 
+  // get messages
   useEffect(() => {
     const getMessage = async () => {
       try {
         const response = await axios.get(
-          `${ENDPOINT}api/v2/message/get-all-messages/${currentChat?._id}`
+          `${ENDPOINT}api/v1/message/get-all-messages/${currentChat?._id}`
         );
         setMessages(response.data.messages);
       } catch (error) {
@@ -122,6 +126,7 @@ const DashboardMessages = () => {
     getMessage();
   }, [currentChat]);
 
+  // create new message
   const sendMessageHandler = async (e) => {
     e.preventDefault();
 
@@ -146,7 +151,7 @@ const DashboardMessages = () => {
     try {
       if (newMessage !== "") {
         await axios
-          .post(`${ENDPOINT}api/v2/message/create-new-message`, message)
+          .post(`${ENDPOINT}api/v1/message/create-new-message`, message)
           .then((res) => {
             setMessages([...messages, res.data.message]);
             updateLastMessage();
@@ -169,7 +174,7 @@ const DashboardMessages = () => {
     }
 
     await axios
-      .put(`${ENDPOINT}api/v2/conversation/update-last-message/${currentChat._id}`, {
+      .put(`${ENDPOINT}api/v1/conversation/update-last-message/${currentChat._id}`, {
         lastMessage: newMessage,
         lastMessageId: seller._id,
       })
@@ -210,7 +215,7 @@ const DashboardMessages = () => {
 
     try {
       await axios
-        .post(`${ENDPOINT}api/v2/message/create-new-message`, {
+        .post(`${ENDPOINT}api/v1/message/create-new-message`, {
           images: e,
           sender: seller._id,
           text: newMessage,
@@ -228,7 +233,7 @@ const DashboardMessages = () => {
 
   const updateLastMessageForImage = async () => {
     await axios.put(
-      `${ENDPOINT}api/v2/conversation/update-last-message/${currentChat._id}`,
+      `${ENDPOINT}api/v1/conversation/update-last-message/${currentChat._id}`,
       {
         lastMessage: "Photo",
         lastMessageId: seller._id,
@@ -311,7 +316,7 @@ const MessageList = ({
 
     const getUser = async () => {
       try {
-        const res = await axios.get(`${ENDPOINT}api/v2/user/user-info/${userId}`);
+        const res = await axios.get(`${ENDPOINT}api/v1/user/user-info/${userId}`);
         setUser(res.data.user);
       } catch (error) {
         console.log(error);
@@ -437,6 +442,7 @@ const SellerInbox = ({
           })}
       </div>
 
+      {/* send message input */}
       <form
         aria-required={true}
         className="p-3 relative w-full flex justify-between items-center"
