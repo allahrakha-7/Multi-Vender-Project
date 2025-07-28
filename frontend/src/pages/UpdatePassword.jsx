@@ -82,7 +82,7 @@ function UpdatePassword() {
                                                 />
                                             )}
                                         </div>
-                    <Link to='/login' className="bg-green-600 text-lg cursor-pointer text-white p-3 text-center rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+                    <Link to='/sign-in' className="bg-green-600 text-lg cursor-pointer text-white p-3 text-center rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
                         Update
                     </Link>
                 </form>

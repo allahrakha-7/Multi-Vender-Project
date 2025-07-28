@@ -2,7 +2,17 @@ import { errorHandler } from "../utils/errorHandler.js";
 import catchAsyncError from "./catchAsyncError.js";
 import User from '../model/user.model.js';
 import Shop from '../model/shop.model.js';
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'
+import { signup, signin, signout, google } from "../controllers/auth.controller.js";
+import express from 'express';
+
+const router = express.Router();
+
+router.post('/sign-up', signup);
+router.post('/sign-in', signin);
+router.post('/google', google);
+router.post('/sign-out', signout);
+
 
 export const isAuthenticated = catchAsyncError(async (req,res,next) => {
     const {access_token} = req.cookies;

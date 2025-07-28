@@ -175,15 +175,15 @@ function Header() {
           <div className="flex items-center space-x-3 sm:space-x-4">
             {isAuthenticated ? (
               <>
-                <Link to="/profile" className="relative cursor-pointer">
-                  <CgProfile size={24} color="rgb(0 0 0 / 70%)" />
-                </Link>
                 <div className="relative cursor-pointer">
                   <AiOutlineShoppingCart size={24} />
                   <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-3 h-3 text-white font-mono text-[10px] leading-tight text-center">
                     {cart && cart.length}
                   </span>
                 </div>
+                <Link to="/profile" className="relative cursor-pointer">
+                  <CgProfile size={24} color="rgb(0 0 0 / 70%)" />
+                </Link>
               </>
             ) : (
               <Link
@@ -200,7 +200,6 @@ function Header() {
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] bg-black/40 sm:hidden">
           <div className="fixed top-0 left-0 h-full w-[85%] max-w-xs bg-white shadow-2xl p-5 overflow-y-auto">
-            {/* Close */}
             <div className="flex items-center justify-between mb-6">
               <div className="font-bold text-lg">Menu</div>
               <button
@@ -302,14 +301,6 @@ function Header() {
                 {isAuthenticated ? (
                   <div className="flex items-center gap-4">
                     <Link
-                      to="/profile"
-                      className="flex items-center gap-2 text-gray-800"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      <CgProfile size={22} />
-                      <span>Profile</span>
-                    </Link>
-                    <Link
                       to="/cart"
                       className="relative flex items-center gap-2 text-gray-800"
                       onClick={() => setMobileOpen(false)}
@@ -320,10 +311,18 @@ function Header() {
                         {cart && cart.length}
                       </span>
                     </Link>
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-2 text-gray-800"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <CgProfile size={22} />
+                      <span>Profile</span>
+                    </Link>
                   </div>
                 ) : (
                   <Link
-                    to="/sign-in"
+                    to="/login"
                     className="inline-block bg-[#00bf63] text-white text-sm px-4 py-2 rounded-full mt-2"
                     onClick={() => setMobileOpen(false)}
                   >

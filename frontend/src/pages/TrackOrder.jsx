@@ -9,7 +9,7 @@ import DropDown from "../components/Layout/DropDown";
 import { useDispatch, useSelector } from "react-redux";
 import Cart from "../components/Cart";
 import Wishlist from "../components/Wishlist";
-import { getAllOrdersOfUser } from "../redux/actions/order";
+// import { getAllOrdersOfUser } from "../redux/actions/order";
 import { AiFillFacebook, AiFillInstagram, AiFillYoutube, AiOutlineTwitter } from "react-icons/ai";
 
 const TrackOrder = () => {
@@ -31,7 +31,7 @@ const TrackOrder = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
+    // dispatch(getAllOrdersOfUser(user._id));
   }, [dispatch, user._id]);
 
   const data = orders && orders.find((item) => item._id === id);

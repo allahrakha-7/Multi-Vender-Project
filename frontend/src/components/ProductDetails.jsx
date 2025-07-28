@@ -7,12 +7,12 @@ import {
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllProductsShop } from "../redux/actions/product";
-import {
-  addToWishlist,
-  removeFromWishlist,
-} from "../redux/actions/wishlist";
-import { addTocart } from "../redux/actions/cart";
+// import { getAllProductsShop } from "../redux/actions/product";
+// import {
+//   addToWishlist,
+//   removeFromWishlist,
+// } from "../redux/actions/wishlist";
+// import { addTocart } from "../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "./Ratings";
 import axios from "axios";
@@ -28,7 +28,7 @@ const ProductDetails = ({ data }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllProductsShop(data && data?.shop._id));
+    // dispatch(getAllProductsShop(data && data?.shop._id));
     if (wishlist && wishlist.find((i) => i._id === data?._id)) {
       setClick(true);
     } else {
@@ -46,15 +46,15 @@ const ProductDetails = ({ data }) => {
     }
   };
 
-  const removeFromWishlistHandler = (data) => {
-    setClick(!click);
-    dispatch(removeFromWishlist(data));
-  };
+  // const removeFromWishlistHandler = (data) => {
+    // setClick(!click);
+    // dispatch(removeFromWishlist(data));
+  // };
 
-  const addToWishlistHandler = (data) => {
-    setClick(!click);
-    dispatch(addToWishlist(data));
-  };
+  // const addToWishlistHandler = (data) => {
+    // setClick(!click);
+    // dispatch(addToWishlist(data));
+  // };
 
   const addToCartHandler = (id) => {
     const isItemExists = cart && cart.find((i) => i._id === id);
@@ -64,8 +64,8 @@ const ProductDetails = ({ data }) => {
       if (data.stock < 1) {
         toast.error("Product stock limited!");
       } else {
-        const cartData = { ...data, qty: count };
-        dispatch(addTocart(cartData));
+        // const cartData = { ...data, qty: count };
+        // dispatch(addTocart(cartData));
         toast.success("Item added to cart successfully!");
       }
     }
@@ -180,7 +180,7 @@ const ProductDetails = ({ data }) => {
                       <AiFillHeart
                         size={30}
                         className="cursor-pointer"
-                        onClick={() => removeFromWishlistHandler(data)}
+                        // onClick={() => removeFromWishlistHandler(data)}
                         color={click ? "red" : "#333"}
                         title="Remove from wishlist"
                       />
@@ -188,7 +188,7 @@ const ProductDetails = ({ data }) => {
                       <AiOutlineHeart
                         size={30}
                         className="cursor-pointer"
-                        onClick={() => addToWishlistHandler(data)}
+                        // onClick={() => addToWishlistHandler(data)}
                         color={click ? "red" : "#333"}
                         title="Add to wishlist"
                       />

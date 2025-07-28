@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BsFillBagFill } from "react-icons/bs";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrdersOfUser } from "../redux/actions/order";
+// import { getAllOrdersOfUser } from "../redux/actions/order";
 import { RxCross1 } from "react-icons/rx";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import axios from "axios";
@@ -20,7 +20,7 @@ const UserOrderDetails = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
+    // dispatch(getAllOrdersOfUser(user._id));
   }, [dispatch,user._id]);
 
   const data = orders && orders.find((item) => item._id === id);
@@ -41,7 +41,7 @@ const UserOrderDetails = () => {
       )
       .then((res) => {
         toast.success(res.data.message);
-        dispatch(getAllOrdersOfUser(user._id));
+        // dispatch(getAllOrdersOfUser(user._id));
         setComment("");
         setRating(null);
         setOpen(false);
@@ -56,7 +56,7 @@ const UserOrderDetails = () => {
       status: "Processing refund"
     }).then((res) => {
        toast.success(res.data.message);
-    dispatch(getAllOrdersOfUser(user._id));
+    // dispatch(getAllOrdersOfUser(user._id));
     }).catch((error) => {
       toast.error(error.response.data.message);
     })

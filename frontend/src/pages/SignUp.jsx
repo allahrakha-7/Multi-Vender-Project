@@ -1,136 +1,153 @@
-import { useState, useEffect } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlineUser } from "react-icons/ai";
+import { useState } from "react";
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiOutlineMail,
+  AiOutlineUser,
+} from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import axios from "axios";
 import { toast } from "react-toastify";
-import logoup from '../images/logo_up.png';
-import sideImg from '../images/side_img1.jpg';
-import { FaGoogle } from 'react-icons/fa';
+import OAuth from "../components/OAuth";
+import logoup from "../images/logo_up.png";
+import sideImg from "../images/side_img1.jpg";
 
-const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+function SignUp () {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [avatar, setAvatar] = useState(null);
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    if(isAuthenticated === true){
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate]);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post(`/user/create-user`, { name, email, password, avatar })
-      .then((res) => {
-        toast.success(res.data.message);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar();
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setLoading(false);
+        setError(data.message || "Something went wrong");
+        toast.error(data.message || "Signup failed");
+        return;
+      }
+
+      toast.success("Account created successfully!");
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+      toast.error("Signup failed: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-        <div className="flex flex-col md:flex-row h-screen w-screen">
-            <div className="hidden md:block w-[400px] h-screen">
-                <img src={sideImg} alt="side_img" className="w-full h-full object-cover" />
-            </div>
+    <div className="flex flex-col md:flex-row h-screen w-screen">
+      <div className="hidden md:block w-[400px] h-screen">
+        <img src={sideImg} alt="Signup visual" className="w-full h-full object-cover" />
+      </div>
 
-            <div className="w-full md:flex-1 p-4 flex flex-col justify-center items-start md:pl-12 mt-4 md:mt-0">
-                <img src={logoup} alt="logo_brand" className="mb-4" />
-                <h1 className="text-3xl font-semibold mb-6 font-sans">Create your account</h1>
-                <p className="font-bold text-lg mb-4">
-                    Have an account?{' '}
-                    <Link to="/login">
-                        <span className="text-blue-600 font-semibold text-xl cursor-pointer">
-                            Log in now
-                        </span>
-                    </Link>
-                </p>
+      <div className="w-full md:flex-1 p-4 flex flex-col justify-center items-start md:pl-12 mt-4 md:mt-0">
+        <img src={logoup} alt="Vendify logo" className="mb-4" />
+        <h1 className="text-3xl font-semibold mb-4">Create your account</h1>
 
-                <form className="flex flex-col gap-3 w-full max-w-md" onSubmit={handleSubmit}>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Enter username"
-                            id="username"
-                            className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-sky-600 w-full"
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                        <AiOutlineUser
-                            className="absolute top-3 right-3 text-gray-600"
-                            size={22}
-                        />
-                    </div>
+        <p className="font-medium text-base mb-4">
+          Already have an account?{" "}
+          <Link to="/sign-in" className="text-blue-600 font-semibold hover:underline">
+            Log in now
+          </Link>
+        </p>
 
-                    <div className="relative">
-                        <input
-                            type="email"
-                            placeholder="Enter email"
-                            id="email"
-                            className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-sky-600 w-full"
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <AiOutlineMail
-                            className="absolute top-3 right-3 text-gray-600"
-                            size={22}
-                        />
-                    </div>
+        <form className="flex flex-col gap-4 w-full max-w-md" onSubmit={handleSubmit}>
+          <div className="relative">
+            <input
+              type="text"
+              id="username"
+              placeholder="Enter username"
+              className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-blue-500 w-full"
+              onChange={handleChange}
+              required
+            />
+            <AiOutlineUser className="absolute top-3 right-3 text-gray-600" size={22} />
+          </div>
 
-                    <div className="relative">
-                        <input
-                            type={visible ? 'text' : 'password'}
-                            placeholder="Enter password"
-                            required
-                            autoComplete="current-password"
-                            className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-sky-600 w-full"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        {visible ? (
-                            <AiOutlineEye
-                                className="absolute top-3 right-3 text-gray-600 cursor-pointer"
-                                size={24}
-                                onClick={() => setVisible(false)}
-                            />
-                        ) : (
-                            <AiOutlineEyeInvisible
-                                className="absolute top-3 right-3 text-gray-600 cursor-pointer"
-                                size={24}
-                                onClick={() => setVisible(true)}
-                            />
-                        )}
-                    </div>
+          <div className="relative">
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter email"
+              className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-blue-500 w-full"
+              onChange={handleChange}
+              required
+            />
+            <AiOutlineMail className="absolute top-3 right-3 text-gray-600" size={22} />
+          </div>
 
-                    <button className="bg-green-600 text-lg cursor-pointer text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-                        Sign Up
-                    </button>
+          <div className="relative">
+            <input
+              type={visible ? "text" : "password"}
+              id="password"
+              placeholder="Enter password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-blue-500 w-full"
+              autoComplete="current-password"
+            />
+            {visible ? (
+              <AiOutlineEye
+                onClick={() => setVisible(false)}
+                className="absolute top-3 right-3 text-gray-600 cursor-pointer"
+                size={22}
+              />
+            ) : (
+              <AiOutlineEyeInvisible
+                onClick={() => setVisible(true)}
+                className="absolute top-3 right-3 text-gray-600 cursor-pointer"
+                size={22}
+              />
+            )}
+          </div>
 
-                    <div className="flex items-center justify-center my-3">
-                        <div className="flex-1 border-t border-gray-300"></div>
-                        <span className="px-2 text-sm text-gray-500">OR</span>
-                        <div className="flex-1 border-t border-gray-300"></div>
-                    </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-green-600 text-white text-lg py-3 rounded-lg hover:opacity-90 disabled:opacity-70 transition"
+          >
+            {loading ? "Loading..." : "Sign Up"}
+          </button>
 
-                    <button className="bg-green-600 text-lg cursor-pointer text-white flex items-center justify-center gap-2 p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-                        Continue with Google <FaGoogle className='text-xl' />
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
-}
+          <div className="flex items-center justify-center my-3">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span className="px-3 text-sm text-gray-500">OR</span>
+            <div className="flex-1 border-t border-gray-300"></div>
+          </div>
+          <OAuth />
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export default SignUp;

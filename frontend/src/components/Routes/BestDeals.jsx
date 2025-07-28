@@ -1,17 +1,9 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import ProductCard from "./ProductCard";
+import { useState } from "react";
 
 const BestDeals = () => {
+  // eslint-disable-next-line no-unused-vars
   const [data, setData] = useState([]);
-  const { allProducts } = useSelector((state) => state.products);
 
-  useEffect(() => {
-    const allProductsData = allProducts ? [...allProducts] : [];
-    const sortedData = allProductsData.sort((a, b) => b.sold_out - a.sold_out);
-    const topEight = sortedData.slice(0, 8);
-    setData(topEight);
-  }, [allProducts]);
 
   return (
     <section className="w-full my-2 bg-gradient-to-b from-white to-indigo-50/40">

@@ -6,12 +6,12 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { MdTrackChanges } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
-import { deleteUserAddress, loadUser, updatUserAddress, updateUserInformation } from "../redux/actions/user";
+// import { deleteUserAddress, loadUser, updatUserAddress, updateUserInformation } from "../redux/actions/user";
 import { Country, State } from "country-state-city";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { getAllOrdersOfUser } from "../redux/actions/order";
+// import { getAllOrdersOfUser } from "../redux/actions/order";
 
 const ProfileContent = ({ active }) => {
   const { user, error, successMessage } = useSelector((state) => state.user);
@@ -36,7 +36,7 @@ const ProfileContent = ({ active }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateUserInformation(name, email, phoneNumber, password));
+    // dispatch(updateUserInformation(name, email, phoneNumber, password));
   };
 
   const handleImage = async (e) => {
@@ -55,7 +55,7 @@ const ProfileContent = ({ active }) => {
           )
           // eslint-disable-next-line no-unused-vars
           .then((response) => {
-            dispatch(loadUser());
+            // dispatch(loadUser());
             toast.success("avatar updated successfully!");
           })
           .catch((error) => {
@@ -197,7 +197,7 @@ const AllOrders = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
+    // dispatch(getAllOrdersOfUser(user._id));
   }, [dispatch, user._id]);
 
   const columns = [
@@ -282,7 +282,7 @@ const AllRefundOrders = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
+    // dispatch(getAllOrdersOfUser(user._id));
   }, [dispatch, user._id]);
 
   const eligibleOrders =
@@ -370,7 +370,7 @@ const TrackOrder = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
+    // dispatch(getAllOrdersOfUser(user._id));
   }, [dispatch, user._id]);
 
   const columns = [
@@ -556,14 +556,14 @@ const Address = () => {
       toast.error("Please fill all the fields!");
     } else {
       dispatch(
-        updatUserAddress(
-          country,
-          city,
-          address1,
-          address2,
-          zipCode,
-          addressType
-        )
+        // updatUserAddress(
+        //   country,
+        //   city,
+        //   address1,
+        //   address2,
+        //   zipCode,
+        //   addressType
+        // )
       );
       setOpen(false);
       setCountry("");
@@ -575,10 +575,10 @@ const Address = () => {
     }
   };
 
-  const handleDelete = (item) => {
-    const id = item._id;
-    dispatch(deleteUserAddress(id));
-  };
+  // const handleDelete = (item) => {
+    // const id = item._id;
+    // dispatch(deleteUserAddress(id));
+  // };
 
   return (
     <div className="w-full px-5">
@@ -754,7 +754,7 @@ const Address = () => {
               <AiOutlineDelete
                 size={25}
                 className="cursor-pointer"
-                onClick={() => handleDelete(item)}
+                // onClick={() => handleDelete(item)}
               />
             </div>
           </div>

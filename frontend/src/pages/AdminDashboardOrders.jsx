@@ -3,7 +3,7 @@ import AdminHeader from "../components/Layout/AdminHeader";
 import AdminSideBar from "../components/Admin/AdminSideBar";
 import { DataGrid } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrdersOfAdmin } from "../redux/actions/order";
+// import { getAllOrdersOfAdmin } from "../redux/actions/order";
 
 const AdminDashboardOrders = () => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const AdminDashboardOrders = () => {
   );
 
   useEffect(() => {
-    dispatch(getAllOrdersOfAdmin());
+    // dispatch(getAllOrdersOfAdmin());
   }, [dispatch]);
 
   const columns = [

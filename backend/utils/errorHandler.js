@@ -1,8 +1,8 @@
-const errorHandler = (message, statusCode) => {
-    const error = new Error(message);
+const errorHandler = (statusCode, message) => {
+    const error = new Error();
     error.statusCode = statusCode;
-    Error.captureStackTrace(error, errorHandler);
+    Error.message = message;
     return error;
 };
 
-export { errorHandler };
+export default errorHandler;

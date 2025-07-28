@@ -1,21 +1,19 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
 
 const userSchema = new mongoose.Schema({
-  name:{
+  username:{
     type: String,
-    required: [true, "Please enter your name!"],
+    required: true,
   },
   email:{
     type: String,
-    required: [true, "Please enter your email!"],
+    required: true,
+    unique: true,
   },
   password:{
     type: String,
-    required: [true, "Please enter your password"],
-    minLength: [4, "Password should be greater than 4 characters"],
-    select: false,
+    required: true,
+    minLength: 4,
   },
   phoneNumber:{
     type: Number,
@@ -47,41 +45,12 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
   avatar:{
-    public_id: {
       type: String,
-      required: true,
+      default: "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-Pic.png",
     },
-    url: {
-      type: String,
-      required: true,
-    },
- },
- createdAt:{
-  type: Date,
-  default: Date.now(),
- },
- resetPasswordToken: String,
- resetPasswordTime: Date,
-});
-
-
-userSchema.pre("save", async function (next){
-  if(!this.isModified("password")){
-    next();
-  }
-
-  this.password = await bcrypt.hash(this.password, 10);
-});
-
-userSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id}, process.env.JWT_SECRET_KEY,{
-    expiresIn: process.env.JWT_EXPIRES,
-  });
-};
-
-userSchema.methods.comparePassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+  },
+ {timestamps: true}
+);
 
 const User = mongoose.model("User", userSchema);
 

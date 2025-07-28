@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail } from 'react-icons/ai';
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
 import axios from "axios";
 import { toast } from "react-toastify";
 import logoup from '../images/logo_up.png';
@@ -13,14 +12,8 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
 
-  const { isAuthenticated } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    if(isAuthenticated === true){
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate]);
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -103,9 +96,10 @@ const SignIn = () => {
                             <a href="/update-password" className='text-blue-600 hover:text-blue-500 font-semibold'>Forget your password?</a>
                         </div>
                     </div>
-                    <button className="bg-green-600 text-white p-3 text-lg rounded-lg uppercase cursor-pointer hover:opacity-95 disabled:opacity-80">
+                    
+                    <Link to='sign-in' className="bg-green-600 text-white p-3 text-lg rounded-lg uppercase cursor-pointer hover:opacity-95 disabled:opacity-80">
                         Sign In
-                    </button>
+                    </Link>
                 </form>
             </div>
 
