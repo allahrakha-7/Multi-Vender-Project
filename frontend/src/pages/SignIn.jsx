@@ -1,42 +1,58 @@
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail } from 'react-icons/ai';
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { signInSuccess, signInStart, signInFailure } from "../redux/reducers/userSlice.js";
+import OAuth from "../components/OAuth";
 import logoup from '../images/logo_up.png';
 import sideImg from '../images/side_img2.jpg';
+import { toast } from 'react-toastify';
 
-const SignIn = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [visible, setVisible] = useState(false);
+function SignIn () {
+    const [formData, setFormData] = useState({
+       
+    });
+    const { loading } = useSelector((state) => state.user);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [visible, setVisible] = useState(false);
 
+    const handleChange = (e) => {
+        setFormData({
+            ...formData, [e.target.id]: e.target.value,
+        });
+    };
 
- 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        try {
+            dispatch(signInStart());
+            const res = await fetch("/api/auth/signin", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+                credentials: 'include',
+            });
 
-    await axios
-      .post(
-        `/user/login-user`,
-        {
-          email,
-          password,
-        },
-        { withCredentials: true }
-      )
-      // eslint-disable-next-line no-unused-vars
-      .then((res) => {
-        toast.success("Login Success!");
-        navigate("/");
-        window.location.reload(true); 
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
-  };
+            const data = await res.json();
 
+            if (!res.ok) {
+                dispatch(signInFailure(data.message));
+                toast.error(data.message || "Something went wrong!");
+                return;
+            }
+
+            dispatch(signInSuccess(data));
+            toast.success("Sign in successful!");
+            navigate('/');
+        } catch (error) {
+            dispatch(signInFailure(error.message));
+            toast.error(error.message);    
+        }
+    };
 
     return (
         <div className="flex flex-col md:flex-row h-screen w-screen">
@@ -54,7 +70,7 @@ const SignIn = () => {
                             placeholder="Enter email"
                             id="email"
                             className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-sky-600 w-full"
-                            value={email} onChange={(e) => setEmail(e.target.value)}
+                            onChange={handleChange}
                         />
                         <AiOutlineMail
                             className="absolute top-3 right-3 text-gray-600"
@@ -69,8 +85,7 @@ const SignIn = () => {
                             autoComplete="current-password"
                             className="border p-3 pr-10 rounded-lg border-gray-400 focus:outline-sky-600 w-full"
                             id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={handleChange}
                         />
                         {visible ? (
                             <AiOutlineEye
@@ -97,9 +112,15 @@ const SignIn = () => {
                         </div>
                     </div>
                     
-                    <Link to='sign-in' className="bg-green-600 text-white p-3 text-lg rounded-lg uppercase cursor-pointer hover:opacity-95 disabled:opacity-80">
-                        Sign In
-                    </Link>
+                    <button disabled={loading} className="bg-green-600 text-white p-3 text-lg rounded-lg uppercase cursor-pointer hover:opacity-95 disabled:opacity-80">
+                        {loading ? 'Loading' : 'Sign in'}
+                    </button>
+                    <div className="flex items-center justify-center my-3">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span className="px-3 text-sm text-gray-500">OR</span>
+            <div className="flex-1 border-t border-gray-300"></div>
+          </div>
+          <OAuth />
                 </form>
             </div>
 

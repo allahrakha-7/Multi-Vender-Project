@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema({
   username:{
     type: String,
     required: true,
+    unique: true,
   },
   email:{
     type: String,
@@ -15,10 +16,18 @@ const userSchema = new mongoose.Schema({
     required: true,
     minLength: 4,
   },
-  phoneNumber:{
+  avatar:{
+      type: String,
+      default: "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-Pic.png",
+  },
+  phoneNumber: {
     type: Number,
   },
-  addresses:[
+  role:{
+    type: String,
+    default: "user",
+  },
+  addressInfo:[
     {
       country: {
         type: String,
@@ -35,20 +44,13 @@ const userSchema = new mongoose.Schema({
       zipCode:{
         type: Number,
       },
-      addressType:{
-        type: String,
-      },
     }
   ],
-  role:{
-    type: String,
-    default: "user",
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
-  avatar:{
-      type: String,
-      default: "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-Pic.png",
-    },
-  },
+},
  {timestamps: true}
 );
 

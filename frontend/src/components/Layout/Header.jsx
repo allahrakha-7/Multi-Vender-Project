@@ -1,19 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { AiOutlineShoppingCart } from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
 import { IoIosArrowDown } from "react-icons/io";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
+import { useSelector } from "react-redux";
+import { signOutUserStart, signOutUserFailure, signOutUserSuccess } from '../../redux/reducers/userSlice.js'
+import { useDispatch } from "react-redux";
+import { toast } from 'react-toastify'; 
 
 function Header() {
-  const isAuthenticated = false;
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const cart = [];
   const [searchTerm, setSearchTerm] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
+  const [profileOptions, setProfileOptions] = useState(false);
+  const profileRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutSide = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOptions(false);
+      }
+    }
+  document.addEventListener('mousedown', handleClickOutSide);
+  return () => document.removeEventListener('mousedown', handleClickOutSide);
+  }, []);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
@@ -42,6 +58,22 @@ function Header() {
     "Others",
   ];
 
+  const handleSignOut = async() => {
+    try {
+      dispatch(signOutUserStart());
+      const data = await fetch('/api/auth/signout');
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        toast.error(data.message || "Something went wrong!");
+        return;
+      }
+      dispatch(signOutUserSuccess(data));
+        toast.error(data.message || "Signed Out Successfully!");
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message));
+      toast.error(error.message || "Something went wrong!");
+    }
+  };
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm px-2 py-3 bg-slate-50 shadow-md">
@@ -84,7 +116,7 @@ function Header() {
                   onClick={(e) => e.preventDefault()}
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
-                  <FaSearch className="text-gray-700 text-base sm:text-lg" />
+                  <FaSearch className="text-gray-600 text-base max-lg:hidden" />
                 </button>
               </div>
             </div>
@@ -140,7 +172,7 @@ function Header() {
             >
               <button
                 type="button"
-                className="flex items-center text-gray-700 text-sm md:text-base"
+                className="flex items-center mr-5 text-gray-700 text-sm md:text-base"
               >
                 Categories
                 <IoIosArrowDown
@@ -173,17 +205,41 @@ function Header() {
           </nav>
 
           <div className="flex items-center space-x-3 sm:space-x-4">
-            {isAuthenticated ? (
+            {currentUser ? (
               <>
-                <div className="relative cursor-pointer">
+                <Link to="/cart" className="relative cursor-pointer">
                   <AiOutlineShoppingCart size={24} />
                   <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-3 h-3 text-white font-mono text-[10px] leading-tight text-center">
-                    {cart && cart.length}
+                    {cart?.length || 0}
                   </span>
-                </div>
-                <Link to="/profile" className="relative cursor-pointer">
-                  <CgProfile size={24} color="rgb(0 0 0 / 70%)" />
                 </Link>
+                <div className="relative cursor-pointer">
+                  <img
+                    src={currentUser.avatar}
+                    alt="profile"
+                    className="w-8 h-8 rounded-full object-cover border border-gray-300"
+                    onClick={() => setProfileOptions((prev) => !prev)}
+                  />
+                  {profileOptions && (
+                    <div className="absolute right-0 mt-2 w-35 font-semibold bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                      <Link to='/seller-dashboard' className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setProfileOptions(false)}
+                      >
+                        Become a Seller
+                      </Link>
+                      <Link to='/profile' className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setProfileOptions(false)}
+                      >
+                        Edit Profile
+                      </Link>
+                      <button onClick={handleSignOut} 
+                      className="w-full text-center px-4 py-2  text-sm cursor-pointer text-red-600"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <Link
@@ -226,7 +282,7 @@ function Header() {
               </button>
             </div>
 
-            <nav className="space-y-3">
+            <nav className="space-y-3 ">
               <Link
                 to="/"
                 className="block py-2 text-gray-800 font-medium"
@@ -294,40 +350,6 @@ function Header() {
                       </li>
                     ))}
                   </ul>
-                )}
-              </div>
-
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                {isAuthenticated ? (
-                  <div className="flex items-center gap-4">
-                    <Link
-                      to="/cart"
-                      className="relative flex items-center gap-2 text-gray-800"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      <AiOutlineShoppingCart size={22} />
-                      <span>Cart</span>
-                      <span className="absolute -right-3 -top-2 rounded-full bg-[#3bc177] w-4 h-4 text-white font-mono text-[10px] leading-tight text-center">
-                        {cart && cart.length}
-                      </span>
-                    </Link>
-                    <Link
-                      to="/profile"
-                      className="flex items-center gap-2 text-gray-800"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      <CgProfile size={22} />
-                      <span>Profile</span>
-                    </Link>
-                  </div>
-                ) : (
-                  <Link
-                    to="/login"
-                    className="inline-block bg-[#00bf63] text-white text-sm px-4 py-2 rounded-full mt-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Sign in
-                  </Link>
                 )}
               </div>
             </nav>

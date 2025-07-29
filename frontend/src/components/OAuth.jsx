@@ -15,22 +15,22 @@ function OAuth() {
 
             const result = await signInWithPopup(auth, provider);
 
-            const data = ('/api/auth/google', {
+            const res = await fetch('/api/auth/google', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
                 },
-                credentials: 'include',
                 body: JSON.stringify({
                     name: result.user.displayName,
                     email: result.user.email,
                     photo: result.user.photoURL,
-                })
+                }),
+                credentials: 'include',
             });
-            
+
+            const data = await res.json();
             dispatch(signInSuccess(data));
-            
-            navigate("/sign-up");
+            navigate("/");
         } catch (error) {
             console.error("Could not login with Google. Google Authentication Error:", error);
         }
@@ -38,8 +38,8 @@ function OAuth() {
     return (
         <>
             <button onClick={handleGoogleClick} type="button" className="bg-green-600 text-lg cursor-pointer text-white flex items-center justify-center gap-2 p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-                        Continue with Google <FaGoogle className='text-xl' />
-                    </button>
+                Continue with Google <FaGoogle className='text-xl' />
+            </button>
         </>
     );
 }

@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  AiOutlineEye,
-  AiOutlineEyeInvisible,
-  AiOutlineMail,
-  AiOutlineUser,
-} from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlineUser } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import OAuth from "../components/OAuth";
@@ -53,7 +48,7 @@ function SignUp () {
       }
 
       toast.success("Account created successfully!");
-      navigate("/");
+      navigate("/sign-in");
     } catch (err) {
       setError(err.message);
       toast.error("Signup failed: " + err.message);
