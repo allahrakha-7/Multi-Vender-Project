@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from './pages/Profile';
+import SellerHomePage from './pages/SellerHomePage'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path='/sign-up' element={<SignUp />} />
         <Route path='/update-password' element={<UpdatePassword />} />
         <Route path='/profile' element={<Profile/>} />
+        <Route path='/seller-dashboard' element={<SellerHomePage/>}/>
       </Routes>
     </BrowserRouter>
   );

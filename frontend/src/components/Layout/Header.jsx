@@ -225,7 +225,7 @@ function Header() {
                       <Link to='/seller-dashboard' className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
                       onClick={() => setProfileOptions(false)}
                       >
-                        Become a Seller
+                        Switch to Seller
                       </Link>
                       <Link to='/profile' className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
                       onClick={() => setProfileOptions(false)}
