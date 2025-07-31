@@ -9,7 +9,7 @@ export const test = (req, res) => {
 }
 
 export const updateUser = async (req, res, next) => {
-    if (req.user.id !== req.params.id) return next(errorHandler(401, 'You can only upload your own account!'));
+    if (req.user.id !== req.params.id) return next (errorHandler(401, 'You can only upload your own account!'));
 
     try {
         if(req.body.password) {
@@ -21,6 +21,9 @@ export const updateUser = async (req, res, next) => {
                 username: req.body.username,
                 email: req.body.email,
                 avatar: req.body.avatar,
+                phoneNumber: req.body.phoneNumber,
+                role: req.body.role,
+                addressInfo: req.body.addressInfo,
             }
         }, {new : true})
 

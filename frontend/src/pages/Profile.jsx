@@ -121,20 +121,27 @@ function Profile() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         try {
             setLoading(true);
             dispatch(updateUserStart());
+            const submitData = {
+            ...formData,
+            addressInfo: [formData.addressInfo]
+        };
             const res = await fetch(`/api/user/update/${currentUser._id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData),
+                credentials: 'include',
+                body: JSON.stringify(submitData),
             });
 
             const data = await res.json();
             if (data.success === false) {
                 dispatch(updateUserFailure(data.message));
+                toast.error(data.message);
                 return;
             }
             dispatch(updateUserSuccess(data));
@@ -143,6 +150,8 @@ function Profile() {
         } catch (error) {
             dispatch(updateUserFailure(error.message))
             toast.error("Failed to update profile.");
+        } finally {
+            setLoading(false); 
         }
     };
 
@@ -165,6 +174,26 @@ function Profile() {
             toast.error('Something went wrong. Account can not be deleted!');
         }
     }
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+    if (currentUser) {
+        setFormData({
+            username: currentUser.username || "",
+            email: currentUser.email || "",
+            password: "", // Keep empty for security
+            phoneNumber: currentUser.phoneNumber || "",
+            role: currentUser.role?.role || "user",
+            addressInfo: currentUser.addressInfo?.[0] || {
+                country: "",
+                city: "",
+                address1: "",
+                address2: "",
+                zipCode: "",
+            },
+        });
+    }
+}, [currentUser]);
 
     return (
         <>
@@ -207,11 +236,11 @@ function Profile() {
                     <div className="flex flex-col space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1"><FaUser className="inline mr-2" />Username:</label>
-                            <input type="text" name="username" id="username" placeholder="Enter username"   defaultValue={currentUser.username} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2" required />
+                            <input type="text" name="username" id="username" placeholder="Enter username"   defaultValue={formData.username} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2" required />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1"><FaEnvelope className="inline mr-2" />Email:</label>
-                            <input type="email" name="email" id="email" placeholder="Enter email"   defaultValue={currentUser.email} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2" required />
+                            <input type="email" name="email" id="email" placeholder="Enter email"   defaultValue={formData.email} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2" required />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1"><AiOutlineEyeInvisible className="inline mrr-2" /> Password:</label>
@@ -219,7 +248,7 @@ function Profile() {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1"><FaPhoneAlt className="inline mr-2" />Phone Number:</label>
-                            <input type="text" name="phoneNumber" id="phoneNumber" placeholder="Enter phone number" onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2" />
+                            <input type="text" name="phoneNumber" id="phoneNumber" value={formData.phoneNumber} placeholder="Enter phone number" onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1"><FaUserTag className="inline mr-2" />Role:</label>
@@ -227,21 +256,20 @@ function Profile() {
                                 name="role" id="role"
                                 onChange={handleChange}
                                 className="w-full border border-gray-300 rounded-lg p-2"
+                                value={formData.role}
                             >
                                 <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                                <option value="moderator">Moderator</option>
+                                <option value="admin">Seller</option>
                             </select>
                         </div>
 
                         <h4 className="text-lg font-semibold text-green-900 pt-2"><FaMapMarkedAlt className="inline mr-2" />Address Information</h4>
-                        {Object.entries(formData.addressInfo).map(([key, value]) => (
+                        {['country','city','address1', 'address2', 'zipCode'].map((key) => (
                             <div key={key}>
                                 <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">{key}:</label>
                                 <input
                                     type="text"
                                     name={key}
-                                    value={value}
                                     onChange={handleChange}
                                     className="w-full border border-gray-300 rounded-lg p-2"
                                 />
@@ -257,13 +285,14 @@ function Profile() {
                                 {loading ? 'Saving...' : 'Save Changes'}
                             </button>
 
-                            <button
+                            <Link to='/sign-up'><button
                                 type="button"
                                 className="mt-4 bg-red-600 text-white py-2 px-4 max-sm:px-2 max-sm:py-1  rounded-xl hover:opacity-95 cursor-pointer"
                                 disabled={loading} onClick={handleDeleteUser}
                             >
-                                {loading ? 'Deleting account...' : 'Delete Account'}
+                                Delete Accuont
                             </button>
+                            </Link>
                         </div>
                     </div>
                 </form>

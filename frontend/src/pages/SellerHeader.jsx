@@ -18,31 +18,6 @@ function SellerHeader() {
         return () => document.removeEventListener('mousedown', handleClickOutSide);
     }, []);
 
-    // eslint-disable-next-line no-unused-vars
-    const categories = [
-        "Personal Care",
-        "Household Items",
-        "Health & Medicine",
-        "Entertainment",
-        "Decorations",
-        "Electronics",
-        "Stationery and Bags",
-        "Others",
-    ];
-
-    // eslint-disable-next-line no-unused-vars
-    const products = [
-        "Computers and Laptops",
-        "Cosmetics and Body Care",
-        "Accessories",
-        "Cloths and Shoes",
-        "Gifts",
-        "Pet Care",
-        "Mobile and Tablets",
-        "Music and Gaming",
-        "Others",
-    ];
-
     return (
         <>
             <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-3 bg-slate-50 shadow-md">
@@ -64,8 +39,8 @@ function SellerHeader() {
                     <nav className="hidden md:flex items-center">
                         <Link to="/seller-dashboard" className="text-gray-700 text-lg lg:text-xl xl:text-2xl font-semibold relative">
                             Seller Dashboard
-                            <span className="absolute -top-1 -right-16 lg:-right-20 shadow-white shadow-sm text-xs lg:text-sm px-1 lg:px-3 py-1 lg:py-1.5 rounded-full text-red-500 font-medium bg-white border border-red-200">
-                                Account
+                            <span className="absolute -top-1 -right-23 lg:-right-30 shadow-white shadow-sm text-xs lg:text-sm px-1 lg:px-3 py-1 lg:py-1.5 rounded-full text-red-500 font-medium bg-white border border-red-200">
+                                Seller Account
                             </span>
                         </Link>
                     </nav>
@@ -75,7 +50,7 @@ function SellerHeader() {
                             Seller Dashboard
                         </h1>
                         <span className="text-[10px] xs:text-xs text-red-500 font-medium">
-                            Account
+                            Seller Account
                         </span>
                     </div>
 
@@ -102,30 +77,6 @@ function SellerHeader() {
                     </div>
                 </div>
             </header>
-
-            <div className="pt-16 sm:pt-20 md:pt-24 px-2 sm:px-4 md:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-4">
-                        {/* Sample dashboard cards - responsive grid */}
-                        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-                            <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Total Products</h3>
-                            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-600 mt-2">24</p>
-                        </div>
-                        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-                            <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Orders</h3>
-                            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 mt-2">156</p>
-                        </div>
-                        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-                            <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Revenue</h3>
-                            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-purple-600 mt-2">$2,847</p>
-                        </div>
-                        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md sm:col-span-2 lg:col-span-1">
-                            <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Active Listings</h3>
-                            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-600 mt-2">18</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </>
     );
 }
