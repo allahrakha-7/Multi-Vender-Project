@@ -1,4 +1,3 @@
-// models/product.model.js
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
@@ -33,6 +32,10 @@ const productSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
+  shop: {
+    type: String,
+    required: true,
+  },
   reviews: [
     {
       user: {
@@ -47,10 +50,6 @@ const productSchema = new mongoose.Schema({
       productId: {
         type: String,
       },
-      createdAt: {
-        type: Date,
-        default: Date.now(),
-      },
     },
   ],
   ratings: {
@@ -61,24 +60,14 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  shop: {
-    type: Object,
-    required: true,
-  },
   userRef: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', 
     required: true,
   },
-  sold_out: {
-    type: Number,
-    default: 0,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+
+  }, {timestamps: true}
+);
 
 const Product = mongoose.model("Product", productSchema);
 

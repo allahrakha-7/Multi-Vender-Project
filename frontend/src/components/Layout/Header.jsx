@@ -7,14 +7,18 @@ import { IoIosArrowDown } from "react-icons/io";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
 import { useSelector } from "react-redux";
-import { signOutUserStart, signOutUserFailure, signOutUserSuccess } from '../../redux/reducers/userSlice.js'
+import {
+  signOutUserStart,
+  signOutUserFailure,
+  signOutUserSuccess,
+} from "../../redux/reducers/userSlice.js";
 import { useDispatch } from "react-redux";
-import { toast } from 'react-toastify'; 
+import { toast } from "react-toastify";
 
 function Header() {
   const { currentUser } = useSelector((state) => state.user);
+  const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-  const cart = [];
   const [searchTerm, setSearchTerm] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
@@ -22,13 +26,13 @@ function Header() {
   const profileRef = useRef();
 
   useEffect(() => {
-    const handleClickOutSide = (e) => {
+    const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOptions(false);
       }
-    }
-  document.addEventListener('mousedown', handleClickOutSide);
-  return () => document.removeEventListener('mousedown', handleClickOutSide);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -58,22 +62,24 @@ function Header() {
     "Others",
   ];
 
-  const handleSignOut = async() => {
+  const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart());
-      const data = await fetch('/api/auth/signout');
-      if (data.success === false) {
-        dispatch(signOutUserFailure(data.message));
-        toast.error(data.message || "Something went wrong!");
+      const data = await fetch("/api/auth/signout");
+      const result = await data.json(); // Parse JSON response
+      if (data.success === false || !result.success) {
+        dispatch(signOutUserFailure(result.message));
+        toast.error(result.message || "Something went wrong!");
         return;
       }
-      dispatch(signOutUserSuccess(data));
-        toast.error(data.message || "Signed Out Successfully!");
+      dispatch(signOutUserSuccess(result));
+      toast.success(result.message || "Signed Out Successfully!");
     } catch (error) {
       dispatch(signOutUserFailure(error.message));
       toast.error(error.message || "Something went wrong!");
     }
   };
+
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm px-2 py-3 bg-slate-50 shadow-md">
@@ -99,7 +105,6 @@ function Header() {
                     shop from home
                   </p>
                 </div>
-
               </div>
             </Link>
 
@@ -138,13 +143,11 @@ function Header() {
               >
                 Products
                 <IoIosArrowDown
-                  className={`ml-1 transition-transform ${isProductOpen ? "rotate-180" : ""
-                    }`}
+                  className={`ml-1 transition-transform ${isProductOpen ? "rotate-180" : ""}`}
                 />
               </button>
               <div
-                className={`absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md transition-all duration-200 ease-in-out z-50 ${isProductOpen ? "opacity-100 visible" : "opacity-0 invisible"
-                  }`}
+                className={`absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md transition-all duration-200 ease-in-out z-50 ${isProductOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
               >
                 <ul className="py-2 text-gray-700 text-sm max-h-[320px]">
                   {products.map((product, index) => (
@@ -176,13 +179,11 @@ function Header() {
               >
                 Categories
                 <IoIosArrowDown
-                  className={`ml-1 transition-transform ${isCategoryOpen ? "rotate-180" : ""
-                    }`}
+                  className={`ml-1 transition-transform ${isCategoryOpen ? "rotate-180" : ""}`}
                 />
               </button>
               <div
-                className={`absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md transition-all duration-200 ease-in-out z-50 ${isCategoryOpen ? "opacity-100 visible" : "opacity-0 invisible"
-                  }`}
+                className={`absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-md transition-all duration-200 ease-in-out z-50 ${isCategoryOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
               >
                 <ul className="py-2 text-gray-700 text-sm max-h-[320px] overflow-y-auto">
                   {categories.map((category, index) => (
@@ -210,10 +211,10 @@ function Header() {
                 <Link to="/cart" className="relative cursor-pointer">
                   <AiOutlineShoppingCart size={24} />
                   <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-3 h-3 text-white font-mono text-[10px] leading-tight text-center">
-                    {cart?.length || 0}
+                    {cart.length}
                   </span>
                 </Link>
-                <div className="relative cursor-pointer">
+                <div className="relative cursor-pointer" ref={profileRef}>
                   <img
                     src={currentUser.avatar}
                     alt="profile"
@@ -222,18 +223,23 @@ function Header() {
                   />
                   {profileOptions && (
                     <div className="absolute right-0 mt-2 w-35 font-semibold bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                      <Link to='/seller-dashboard' className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
-                      onClick={() => setProfileOptions(false)}
+                      <Link
+                        to="/seller-dashboard"
+                        className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setProfileOptions(false)}
                       >
                         Switch to Seller
                       </Link>
-                      <Link to='/profile' className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
-                      onClick={() => setProfileOptions(false)}
+                      <Link
+                        to="/profile"
+                        className="block px-2 py-3 text-center text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setProfileOptions(false)}
                       >
                         Edit Profile
                       </Link>
-                      <button onClick={handleSignOut} 
-                      className="w-full text-center px-4 py-2  text-sm cursor-pointer text-red-600"
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full text-center px-4 py-2 text-sm cursor-pointer text-red-600"
                       >
                         Sign Out
                       </button>
@@ -282,7 +288,7 @@ function Header() {
               </button>
             </div>
 
-            <nav className="space-y-3 ">
+            <nav className="space-y-3">
               <Link
                 to="/"
                 className="block py-2 text-gray-800 font-medium"
@@ -299,8 +305,7 @@ function Header() {
                 >
                   <span>Products</span>
                   <IoIosArrowDown
-                    className={`transition-transform ${mobileProductsOpen ? "rotate-180" : ""
-                      }`}
+                    className={`transition-transform ${mobileProductsOpen ? "rotate-180" : ""}`}
                   />
                 </button>
                 {mobileProductsOpen && (
@@ -330,8 +335,7 @@ function Header() {
                 >
                   <span>Categories</span>
                   <IoIosArrowDown
-                    className={`transition-transform ${mobileCategoriesOpen ? "rotate-180" : ""
-                      }`}
+                    className={`transition-transform ${mobileCategoriesOpen ? "rotate-180" : ""}`}
                   />
                 </button>
                 {mobileCategoriesOpen && (

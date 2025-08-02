@@ -180,7 +180,7 @@ function Footer() {
 
      <div className="bg-green-50 border-t border-green-200">
        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center pt-6 text-gray-600 text-sm pb-6 px-8">
-         <span className="font-medium">© 2025 Vendify. All rights reserved.</span>
+         <span className="font-medium">© 2025 Vendify. All rights are reserved.</span>
          <div className="flex justify-center gap-4">
            <Link to="/terms" className="hover:text-green-600 transition-colors">Terms of Service</Link>
            <span>·</span>

@@ -1,9 +1,39 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link for navigation
+import {
+  fetchOtherUsersProductsStart,
+  fetchOtherUsersProductsSuccess,
+  fetchOtherUsersProductsFailure,
+} from "../../redux/reducers/productSlice";
+import { useDispatch, useSelector } from "react-redux";
+import ProductCard from "../ProductCard";
 
 const BestDeals = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const { products, loading } = useSelector((state) => state.product);
+  const { currentUser } = useSelector((state) => state.user);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        dispatch(fetchOtherUsersProductsStart());
+        const res = await fetch("/api/products", {
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to fetch products");
+
+        dispatch(fetchOtherUsersProductsSuccess(data));
+      } catch (error) {
+        dispatch(fetchOtherUsersProductsFailure(error.message));
+      }
+    };
+
+    fetchProducts();
+  }, [dispatch]);
+
+  // Determine if blur and "Explore More" should be shown (3 rows = 12 cards)
+  const showBlurAndExplore = products && products.length > 12;
 
   return (
     <section className="w-full my-2 bg-gradient-to-b from-white to-indigo-50/40">
@@ -18,9 +48,13 @@ const BestDeals = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 xl:gap-7 mb-12">
-          {data && data.length > 0
-            ? data.map((item, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 xl:gap-7 mb-12 relative">
+          {loading ? (
+            <p className="col-span-full text-center text-gray-400">Loading products...</p>
+          ) : products && products.length > 0 ? (
+            products
+              .filter((item) => item.seller !== currentUser._id)
+              .map((item, idx) => (
                 <div
                   key={idx}
                   className="group rounded-xl bg-white border border-transparent hover:border-indigo-100 hover:shadow-lg transition-all duration-200"
@@ -28,9 +62,22 @@ const BestDeals = () => {
                   <ProductCard data={item} />
                 </div>
               ))
-            : Array.from({ length: 8 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
+          ) : (
+            <p className="col-span-full text-center text-gray-400">No products found</p>
+          )}
+
+          {showBlurAndExplore && (
+            <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-white via-white/80 to-transparent blur-sm pointer-events-none" />
+          )}
+          {showBlurAndExplore && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+              <Link to="/products">
+                <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition">
+                  explore more...
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -38,15 +85,3 @@ const BestDeals = () => {
 };
 
 export default BestDeals;
-
-const SkeletonCard = () => (
-  <div className="animate-pulse rounded-xl bg-white p-4 shadow-sm">
-    <div className="w-full h-40 bg-gray-200 rounded-md mb-4" />
-    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4" />
-    <div className="flex items-center justify-between">
-      <div className="h-6 w-16 bg-gray-200 rounded" />
-      <div className="h-8 w-20 bg-gray-200 rounded" />
-    </div>
-  </div>
-);

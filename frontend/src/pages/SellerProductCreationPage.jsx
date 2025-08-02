@@ -9,11 +9,26 @@ import {
   fetchProductsStart,
   fetchProductsSuccess,
   fetchProductsFailure,
+  deleteProductStart,
+  deleteProductSuccess,
+  deleteProductFailure,
 } from "../redux/reducers/productSlice";
 import { RxCross2 } from "react-icons/rx";
-
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
+import { useNavigate } from "react-router-dom";
 
 function CreateProduct() {
+  // eslint-disable-next-line no-unused-vars
+  const [imageUploadError, setImageUploadError] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [uploading, setUploading] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const { products, loading, error } = useSelector((state) => state.product);
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -23,38 +38,27 @@ function CreateProduct() {
     discountPrice: "",
     stock: "",
     images: [],
-    shopId: "",
-    shop: { name: "" },
+    shop: "",
+    userRef: currentUser?._id || "",
   });
-
-  // eslint-disable-next-line no-unused-vars
-  const [file, setFile] = useState([]);
-  const [imageUploadError, setImageUploadError] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const { currentUser } = useSelector((state) => state.user);
-  const { products, loading } = useSelector((state) => state.product);
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       if (!currentUser) return;
-
       try {
         dispatch(fetchProductsStart());
         const res = await fetch(`/api/product/get/${currentUser._id}`, {
           method: "GET",
           credentials: "include",
         });
-
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch products");
-
         dispatch(fetchProductsSuccess(data));
       } catch (err) {
         dispatch(fetchProductsFailure(err.message));
       }
     };
-
     fetchProducts();
   }, [dispatch, currentUser]);
 
@@ -70,49 +74,25 @@ function CreateProduct() {
       toast.error("You can only upload up to 5 images per listing!");
       return;
     }
-
     setUploading(true);
     setImageUploadError(false);
-
     const uploadPromises = selectedFiles.map((file) => storeImage(file));
-    try {
-      const urls = await Promise.all(uploadPromises);
-      setFormData((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
-      setImageUploadError(false);
-      // eslint-disable-next-line no-unused-vars
-    } catch (err) {
-      setImageUploadError(true);
-      toast.error("Image upload failed (2 MB max per image!)");
-    } finally {
-      setUploading(false);
-    }
+    const urls = await Promise.all(uploadPromises);
+    setFormData((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
+    setImageUploadError(false);
+    setUploading(false);
   };
 
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
-      if (file.size > 2 * 1024 * 1024) {
-        reject("File size exceeds 2MB");
-        return;
-      }
-
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
       formData.append("folder", "multi_vendor_images");
-
       const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`);
-
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const res = JSON.parse(xhr.responseText);
-          resolve(res.secure_url);
-        } else {
-          reject(xhr.responseText);
-        }
-      };
-
+      xhr.onload = () => (xhr.status === 200 ? resolve(JSON.parse(xhr.responseText).secure_url) : reject(xhr.responseText));
       xhr.onerror = () => reject("XHR request failed");
       xhr.send(formData);
     });
@@ -127,37 +107,28 @@ function CreateProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted", formData);
     if (!currentUser) {
       toast.error("Please log in first!");
       return;
     }
-
     if (formData.images.length < 1) {
       toast.error("You must upload at least one image!");
       return;
     }
-
     try {
       setUploading(true);
       dispatch(createProductStart());
       const userRef = currentUser._id;
       const shopId = currentUser._id;
-      const shop = { name: currentUser.username || "Default Shop" };
-
+      const shop = formData.shop;
       const res = await fetch("/api/product/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ ...formData, userRef, shopId, shop }),
       });
-
       const data = await res.json();
-      console.log("API Response:", data);
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to create product");
-      }
-
+      if (!res.ok) throw new Error(data.message || "Failed to create product");
       dispatch(createProductSuccess(data));
       toast.success("Product created successfully!");
       setFormData({
@@ -169,12 +140,10 @@ function CreateProduct() {
         discountPrice: "",
         stock: "",
         images: [],
-        shopId: "",
-        shop: { name: "" },
+        shop: "",
+        userRef: currentUser?._id || "",
       });
-      setFile([]);
     } catch (error) {
-      console.error("Submission Error:", error);
       dispatch(createProductFailure(error.message));
       toast.error(error.message || "Something went wrong while uploading.");
     } finally {
@@ -182,195 +151,339 @@ function CreateProduct() {
     }
   };
 
-  const handleRemoveProduct = () => {
-    try {
-      const res 
-    } catch (error) {
-      
+  const handleRemoveProduct = async (productId) => {
+    if (!productId) {
+      toast.error("Invalid product ID");
+      return;
     }
-  }
+    try {
+      dispatch(deleteProductStart());
+      const res = await fetch(`/api/product/delete/${productId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to delete product");
+      dispatch(deleteProductSuccess(productId));
+      toast.success("Product deleted successfully!");
+      dispatch(fetchProductsStart());
+      const fetchRes = await fetch(`/api/product/get/${currentUser._id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const fetchData = await fetchRes.json();
+      if (fetchRes.ok) dispatch(fetchProductsSuccess(fetchData));
+      else throw new Error(fetchData.message || "Failed to refresh products");
+    } catch (error) {
+      dispatch(deleteProductFailure(error.message));
+      toast.error(error.message || "Something went wrong while deleting.");
+    }
+  };
+
+  // Enhanced star rating function
+  const getStarRating = (rating) => {
+    const totalStars = 5;
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.25 && rating % 1 < 0.75;
+    const emptyStars = totalStars - fullStars - (hasHalfStar ? 1 : 0);
+    const stars = [];
+
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<span key={`full-${i}`} className="text-yellow-400 text-lg">★</span>);
+    }
+    // Add half star if applicable
+    if (hasHalfStar) {
+      stars.push(<span key="half" className="text-yellow-400 text-lg">½</span>);
+    }
+    // Add empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<span key={`empty-${i}`} className="text-gray-300 text-lg">☆</span>);
+    }
+
+    return stars;
+  };
 
   return (
-    <div className="w-full mt-9 flex flex-col items-center py-10 px-2">
-      <div className="w-full max-w-5xl space-y-10">
-        <form onSubmit={handleSubmit} className="bg-white w-full p-6 rounded-xl shadow space-y-5">
-          <h2 className="text-2xl font-bold text-green-600 flex items-center gap-2">
-            <FaPlus /> Create Product
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <>
+      <div className="w-full max-sm:mt-5 mt-9 flex flex-col py-10">
+        <div className="w-full px-2 space-y-10">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white w-full p-4 sm:p-6 md:p-8 rounded-xl shadow-lg space-y-4 sm:space-y-5"
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-green-600 flex items-center gap-2">
+              <FaPlus /> Create Product
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div>
+                <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  Product Name:
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  Category:
+                </label>
+                <input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  Tags:
+                </label>
+                <input
+                  type="text"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  placeholder="e.g., tag1, tag2"
+                  className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  Shop Name:
+                </label>
+                <input
+                  type="text"
+                  name="shop"
+                  value={formData.shop}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  Original Price:
+                </label>
+                <input
+                  type="number"
+                  name="originalPrice"
+                  value={formData.originalPrice}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent"
+                  min="0"
+                />
+              </div>
+              <div>
+                <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  Discount Price:
+                </label>
+                <input
+                  type="number"
+                  name="discountPrice"
+                  value={formData.discountPrice}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent"
+                  min="0"
+                />
+              </div>
+              <div>
+                <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  Stock:
+                </label>
+                <input
+                  type="number"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent"
+                  min="0"
+                />
+              </div>
+            </div>
             <div>
-              <label className="font-medium">Product Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
+              <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                Description:
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
                 required
-                className="w-full border focus:ring-1 border-gray-300 rounded-lg p-2 mt-1"
+                className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:border-none focus:outline-none focus:ring-green-500 resize-none h-24 sm:h-32 md:h-40"
               />
             </div>
             <div>
-              <label className="font-medium">Category</label>
+              <label className="text-sm sm:text-base md:text-lg font-medium text-gray-700 flex items-center gap-1">
+                <FaImage /> Upload Images
+              </label>
               <input
-                type="text"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-                className="w-full border focus:ring-1 border-gray-300 rounded-lg p-2 mt-1"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 md:p-4 mt-1 focus:ring-1 focus:ring-green-500 focus:border-transparent cursor-pointer"
               />
+              <div className="flex gap-2 sm:gap-3 mt-2 flex-wrap">
+                {formData.images.map((src, i) => (
+                  <div key={i} className="relative w-1/4 sm:w-1/5 md:w-1/6 aspect-square">
+                    <img
+                      src={src}
+                      alt={`preview-${i}`}
+                      className="w-full h-full object-contain rounded-lg shadow-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(i)}
+                      className="absolute -top-1 sm:-top-2 md:-top-3 z-10 -right-1 sm:-right-2 md:-right-3 bg-red-500 text-white rounded-full w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 flex items-center justify-center text-xs sm:text-sm hover:bg-red-600"
+                    >
+                      <RxCross2 />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <label className="font-medium">Tags</label>
-              <input
-                type="text"
-                name="tags"
-                value={formData.tags}
-                onChange={handleChange}
-                className="w-full border focus:ring-1 border-gray-300 rounded-lg p-2 mt-1"
-              />
-            </div>
-            <div>
-              <label className="font-medium">Original Price</label>
-              <input
-                type="number"
-                name="originalPrice"
-                value={formData.originalPrice}
-                onChange={handleChange}
-                className="w-full border focus:ring-1 border-gray-300 rounded-lg p-2 mt-1"
-                min="0"
-              />
-            </div>
-            <div>
-              <label className="font-medium">Discount Price</label>
-              <input
-                type="number"
-                name="discountPrice"
-                value={formData.discountPrice}
-                onChange={handleChange}
-                required
-                className="w-full border focus:ring-1 border-gray-300 rounded-lg p-2 mt-1"
-                min="0"
-              />
-            </div>
-            <div>
-              <label className="font-medium">Stock</label>
-              <input
-                type="number"
-                name="stock"
-                value={formData.stock}
-                onChange={handleChange}
-                required
-                className="w-full border focus:ring-1 border-gray-300 rounded-lg p-2 mt-1"
-                min="0"
-              />
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 text-white font-semibold py-2 sm:py-3 md:py-4 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-1 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed transition-colors"
+            >
+              Create Product
+            </button>
+          </form>
+          <div className="flex items-center justify-between m-3">
+            <h2 className="text-[27px] text-gray-800 md:text-[32px] font-[700] font-Roboto relative">
+              Your Products
+              <span className="absolute -bottom-2 left-0 h-[3px] w-10 rounded-full bg-yellow-500/80" />
+            </h2>
+            <span className="hidden md:inline-block text-sm px-3 py-1.5 rounded-full bg-white shadow-sm text-amber-400 font-medium">
+              For Sale
+            </span>
           </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8 md:mt-10">
+            {Array.isArray(products) ? (
+              products.map((product) => (
+                <div
+                  key={product._id}
+                  className="border w-full border-gray-900 rounded-lg p-2 sm:p-3 md:p-2 shadow-gray-500 shadow-md bg-white hover:shadow-lg transition-all duration-200 space-y-2"
+                >
+                  <div className="relative w-full aspect-[4/3]">
+                    {product.images?.length > 1 ? (
+                      <Swiper
+                        navigation={{ nextEl: null, prevEl: null }}
+                        modules={[Navigation]}
+                        className="w-full h-full"
+                        spaceBetween={10}
+                        slidesPerView={1}
+                      >
+                        {product.images.map((src, i) => (
+                          <SwiperSlide key={i}>
+                            <img
+                              src={src}
+                              alt={`slide-${i}`}
+                              className="w-full h-full object-contain"
+                            />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    ) : (
+                      <img
+                        src={product.images?.[0] || "/placeholder-image.jpg"}
+                        alt={product.name}
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                    <button
+                      onClick={() => handleRemoveProduct(product._id)}
+                      className="absolute top-1 sm:top-2 md:top-2 right-2 sm:right-1 md:right-1 bg-red-600 text-white rounded-full w-5 sm:w-6 md:w-7 h-5 sm:h-6 md:h-7 flex items-center justify-center text-xs sm:text-sm hover:bg-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 z-10"
+                      aria-label={`Delete ${product.name}`}
+                    >
+                      <RxCross2 />
+                    </button>
+                  </div>
 
-          <div>
-            <label className="font-medium">Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 focus:ring-1 focus:outline-none rounded-lg p-2 mt-1 resize-none h-24"
-            />
-          </div>
+                  <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-green-700 line-clamp-1">
+                    {product.name}
+                  </h4>
+                  <p className="text-sm sm:text-base md:text-lg text-gray-600 line-clamp-2 break-words">
+                    {product.description.length > 100
+                      ? product.description.slice(0, 100) + "..."
+                      : product.description}
+                  </p>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              <FaImage className="inline mr-1" /> Upload Images
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none cursor-pointer"
-            />
-            {imageUploadError && (
-              <p className="text-red-500 text-sm mt-1">Image upload failed!</p>
-            )}
-            <div className="flex gap-3 mt-2 flex-wrap">
-              {formData.images.map((src, i) => (
-                <div key={i} className="relative w-20 h-20">
-                  <img
-                    src={src}
-                    alt={`preview-${i}`}
-                    className="w-full h-full object-cover rounded shadow"
-                  />
+                  <div className="flex items-center font-semibold gap-2">
+                    <span className="text-md sm:text-base md:text-lg text-green-600 font-semibold">
+                      Rs. {product.discountPrice || 0}
+                    </span>
+                    <span className="text-sm sm:text-base md:text-lg font-semibold text-gray-500 line-through">
+                      Rs. {product.originalPrice || 0}
+                    </span>
+                    <span className="ml-auto text-xs sm:text-xs md:text-base font-semibold bg-yellow-100 text-yellow-800 px-2 rounded-full">
+                      {product.originalPrice && product.discountPrice
+                        ? Math.round(
+                            ((product.originalPrice - product.discountPrice) / product.originalPrice) * 100
+                          ) || 0
+                        : "0"}
+                      % OFF
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-sm sm:text-sm text-gray-500">
+                    <span>Stock: {product.stock || 0}</span>
+                    <span>Category: {product.category || "N/A"}</span>
+                  </div>
+
+                  <p className="text-xs sm:text-sm md:text-base italic text-gray-500">
+                    Shop: {product.shop || "N/A"}
+                  </p>
+
+                  {product.ratings !== undefined && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-medium text-gray-700">Rating:</span>
+                      <div className="flex">{getStarRating(product.ratings)}</div>
+                      <span className="text-sm text-gray-500 ml-1">({product.reviews.length} reviews)</span>
+                    </div>
+                  )}
+
                   <button
-                    type="button"
-                    onClick={() => handleRemoveImage(i)}
-                    className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                    className="w-full mt-2 text-sm sm:text-base md:text-lg bg-green-600 text-white sm:py-3 py-2 md:py-2 px-2 rounded-md hover:bg-green-700 transition"
+                    onClick={() => {
+                      navigate(`/product/${product._id}`, { state: { product } });
+                    }}
                   >
-                    ✕
+                    View Details
                   </button>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={uploading || loading}
-            className="bg-green-600 hover:opacity-90 text-white font-semibold py-2 px-6 rounded-lg"
-          >
-            {uploading || loading ? "Creating..." : "Create Product"}
-          </button>
-        </form>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-          {products.map((product) => (
-            <div
-              key={product._id}
-              className="border rounded-xl p-4 shadow bg-white hover:shadow-lg transition duration-200 space-y-2"
-            >
-              <img
-                src={product.images?.[0] || "/placeholder-image.jpg"}
-                alt={product.name}
-                className="w-full h-40 object-cover rounded"
-                
-              /><RxCross2 onClick={handleRemoveProduct} className="relative left-69 bottom-43 cursor-pointer text-red-600 text-xl"/>
-              <h4 className="text-lg font-bold text-green-800">{product.name}</h4>
-              <p className="text-gray-600 text-sm line-clamp-2">{product.description}</p>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-500 line-through text-sm">
-                  Rs. {product.originalPrice}
-                </span>
-                <span className="text-green-600 font-semibold">
-                  Rs. {product.discountPrice}
-                </span>
-                <span className="ml-auto text-xs bg-yellow-100 text-yellow-800 px-2 rounded-full">
-                  {product.originalPrice && product.discountPrice
-                    ? Math.round(
-                      ((product.originalPrice - product.discountPrice) /
-                        product.originalPrice) *
-                      100
-                    ) || 0
-                    : "0"}% OFF
-                </span>
-              </div>
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>Stock: {product.stock}</span>
-                <span>Category: {product.category}</span>
-              </div>
-              <p className="text-[10px] italic text-gray-400">
-                Shop: {product.shop?.name || "N/A"}
+              ))
+            ) : (
+              <p className="text-yellow-500 text-center col-span-full">
+                Products data is invalid. Please check the server response.
               </p>
-            </div>
-          ))}
+            )}
+          </div>
+          {products.length === 0 && !loading && (
+            <p className="text-gray-500 text-center w-full col-span-full mt-4 sm:mt-6 md:mt-8">
+              No products created yet.
+            </p>
+          )}
+          {loading && (
+            <p className="text-center text-gray-600 w-full col-span-full mt-4 sm:mt-6 md:mt-8">
+              {error ? "Error loading products..." : "Loading products..."}
+            </p>
+          )}
         </div>
-        {products.length === 0 && !loading && (
-          <p className="text-gray-500 text-center w-full col-span-full">
-            No products created yet.
-          </p>
-        )}
-
       </div>
-    </div>
+    </>
   );
 }
 
