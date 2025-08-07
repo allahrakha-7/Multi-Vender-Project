@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaPlayCircle } from "react-icons/fa";
+import { IoArrowBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 // Sample data
 const gamesList = [
@@ -70,104 +72,117 @@ const GamesAndVideos = () => {
 
   const [activeTab, setActiveTab] = useState("games");
 
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900">Games & Videos</h1>
-          <p className="mt-4 text-lg text-gray-600">
-            Enjoy entertainment and insights with Vendify
-          </p>
-        </div>
+    <>
+      <IoArrowBack
+        onClick={goBack}
+        className="text-2xl cursor-pointer absolute top-4 max-sm:top-2 max-sm:left-2 left-4 max-sm:text-xl font-semibold"
+      />
 
-        {/* Tab Navigation */}
-        <div className="mb-6 flex justify-center space-x-6">
-          <button
-            className={`px-4 py-2 rounded-full font-semibold ${activeTab === "games"
-              ? "bg-[#00bf63] text-white"
-              : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-            onClick={() => setActiveTab("games")}
-          >
-            Games
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full font-semibold ${activeTab === "videos"
-              ? "bg-[#00bf63] text-white"
-              : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-            onClick={() => setActiveTab("videos")}
-          >
-            Videos
-          </button>
-        </div>
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900">Games & Videos</h1>
+            <p className="mt-4 text-lg text-gray-600">
+              Enjoy entertainment and insights with Vendify
+            </p>
+          </div>
 
-        {/* Content Section */}
-        {activeTab === "games" ? (
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Play Games</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Active Game Canvas */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div id="game-canvas" className="mb-4"></div>
-                <h3 className="text-lg font-medium text-gray-900">Bouncing Ball</h3>
-                <p className="text-gray-600">A simple interactive ball game.</p>
-              </div>
-              {/* Other Games */}
-              {gamesList.slice(1).map((game) => (
-                <div
-                  key={game.id}
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <h3 className="text-lg font-medium text-gray-900">{game.name}</h3>
-                  <p className="text-gray-600">{game.description}</p>
-                  <Link
-                    to={`/game/${game.name.toLowerCase().replace(/\s+/g, "-")}`}
-                    className="mt-4 inline-block text-[#00bf63] font-semibold hover:underline"
-                  >
-                    Play Now
-                  </Link>
+          {/* Tab Navigation */}
+          <div className="mb-6 flex justify-center space-x-6">
+            <button
+              className={`px-4 py-2 rounded-full font-semibold ${activeTab === "games"
+                ? "bg-[#00bf63] text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+              onClick={() => setActiveTab("games")}
+            >
+              Games
+            </button>
+            <button
+              className={`px-4 py-2 rounded-full font-semibold ${activeTab === "videos"
+                ? "bg-[#00bf63] text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+              onClick={() => setActiveTab("videos")}
+            >
+              Videos
+            </button>
+          </div>
+
+          {/* Content Section */}
+          {activeTab === "games" ? (
+            <section className="mb-12">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Play Games</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Active Game Canvas */}
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                  <div id="game-canvas" className="mb-4"></div>
+                  <h3 className="text-lg font-medium text-gray-900">Bouncing Ball</h3>
+                  <p className="text-gray-600">A simple interactive ball game.</p>
                 </div>
-              ))}
-            </div>
-          </section>
-        ) : (
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Watch Videos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videosList.map((video) => (
-                <div
-                  key={video.id}
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <div className="relative w-full h-0 pb-[56.25%]">
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full rounded-md"
-                      src={video.url}
-                      title={video.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
+                {/* Other Games */}
+                {gamesList.slice(1).map((game) => (
+                  <div
+                    key={game.id}
+                    className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                  >
+                    <h3 className="text-lg font-medium text-gray-900">{game.name}</h3>
+                    <p className="text-gray-600">{game.description}</p>
+                    <Link
+                      to={`/game/${game.name.toLowerCase().replace(/\s+/g, "-")}`}
+                      className="mt-4 inline-block text-[#00bf63] font-semibold hover:underline"
+                    >
+                      Play Now
+                    </Link>
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mt-4">{video.title}</h3>
-                  <p className="text-gray-600">{video.description}</p>
-                  <a
-                    href={video.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex items-center text-[#00bf63] font-semibold hover:underline"
+                ))}
+              </div>
+            </section>
+          ) : (
+            <section className="mb-12">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Watch Videos</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {videosList.map((video) => (
+                  <div
+                    key={video.id}
+                    className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
                   >
-                    <FaPlayCircle className="mr-2" /> Watch Now
-                  </a>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                    <div className="relative w-full h-0 pb-[56.25%]">
+                      <iframe
+                        className="absolute top-0 left-0 w-full h-full rounded-md"
+                        src={video.url}
+                        title={video.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mt-4">{video.title}</h3>
+                    <p className="text-gray-600">{video.description}</p>
+                    <a
+                      href={video.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-flex items-center text-[#00bf63] font-semibold hover:underline"
+                    >
+                      <FaPlayCircle className="mr-2" /> Watch Now
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

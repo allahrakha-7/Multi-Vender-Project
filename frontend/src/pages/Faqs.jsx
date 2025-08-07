@@ -1,10 +1,18 @@
 // pages/FAQs.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { IoArrowBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const FAQs = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeIndex, setActiveIndex] = useState(null);
+
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
 
   // Sample FAQ data (replace with API fetch if needed)
   const faqs = [
@@ -46,67 +54,73 @@ const FAQs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900">FAQs</h1>
-          <p className="mt-4 text-lg text-gray-600">
-            Find answers to common questions about Vendify
-          </p>
-        </div>
+    <>
+      <IoArrowBack
+        onClick={goBack}
+        className="text-2xl cursor-pointer absolute top-4 max-sm:top-2 max-sm:left-2 left-4 max-sm:text-xl font-semibold"
+      />
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900">FAQs</h1>
+            <p className="mt-4 text-lg text-gray-600">
+              Find answers to common questions about Vendify
+            </p>
+          </div>
 
-        {/* Search Bar */}
-        <div className="mb-8">
-          <input
-            type="text"
-            placeholder="Search FAQs..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00bf63] placeholder-gray-400"
-          />
-        </div>
+          {/* Search Bar */}
+          <div className="mb-8">
+            <input
+              type="text"
+              placeholder="Search FAQs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00bf63] placeholder-gray-400"
+            />
+          </div>
 
-        {/* FAQ Accordion */}
-        <section className="space-y-4">
-          {filteredFaqs.length > 0 ? (
-            filteredFaqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md">
-                <button
-                  className="w-full text-left p-4 font-semibold text-gray-900 focus:outline-none"
-                  onClick={() => toggleAccordion(index)}
-                >
-                  <span>{faq.question}</span>
-                  <span className="float-right">
-                    {activeIndex === index ? "−" : "+"}
-                  </span>
-                </button>
-                {activeIndex === index && (
-                  <div className="p-4 text-gray-600 border-t border-gray-200">
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-600">No FAQs found matching your search.</p>
-          )}
-        </section>
+          {/* FAQ Accordion */}
+          <section className="space-y-4">
+            {filteredFaqs.length > 0 ? (
+              filteredFaqs.map((faq, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-md">
+                  <button
+                    className="w-full text-left p-4 font-semibold text-gray-900 focus:outline-none"
+                    onClick={() => toggleAccordion(index)}
+                  >
+                    <span>{faq.question}</span>
+                    <span className="float-right">
+                      {activeIndex === index ? "−" : "+"}
+                    </span>
+                  </button>
+                  {activeIndex === index && (
+                    <div className="p-4 text-gray-600 border-t border-gray-200">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-600">No FAQs found matching your search.</p>
+            )}
+          </section>
 
-        {/* Contact Section */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">
-            Can’t find what you’re looking for? Get in touch with us!
-          </p>
-          <Link
-            to="/contact"
-            className="inline-block bg-[#00bf63] text-white font-semibold px-6 py-3 rounded-full hover:bg-green-700 transition"
-          >
-            Contact Support
-          </Link>
+          {/* Contact Section */}
+          <div className="mt-12 text-center">
+            <p className="text-gray-600 mb-4">
+              Can’t find what you’re looking for? Get in touch with us!
+            </p>
+            <Link
+              to="/contact"
+              className="inline-block bg-[#00bf63] text-white font-semibold px-6 py-3 rounded-full hover:bg-green-700 transition"
+            >
+              Contact Support
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { FaPaperPlane, FaSpinner } from "react-icons/fa";
 import { toast } from "react-toastify";
 import io from "socket.io-client";
+import { IoArrowBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+
 
 const LiveChat = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -18,10 +21,10 @@ const LiveChat = () => {
   const initializeSocket = useCallback(() => {
     socket.current = io("http://localhost:4000", {
       withCredentials: true,
-      transports: ["websocket", "polling"], // Fallback to polling
-      reconnection: true, // Enable reconnection
-      reconnectionAttempts: 5, // Limit attempts
-      reconnectionDelay: 1000, // Delay between attempts
+      transports: ["websocket", "polling"], 
+      reconnection: true, 
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000, 
     });
 
     socket.current.on("connect", () => {
@@ -107,7 +110,19 @@ const LiveChat = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  
+    const navigate = useNavigate();
+  
+    const goBack = () => {
+      navigate(-1);
+    };
+
   return (
+    <>
+    <IoArrowBack
+        onClick={goBack}
+        className="text-2xl cursor-pointer absolute top-4 max-sm:top-2 max-sm:left-2 left-4 max-sm:text-xl font-semibold"
+      />
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" role="main">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
@@ -203,6 +218,7 @@ const LiveChat = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -5,7 +5,9 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.route.js';
 import userRoutes from './routes/user.route.js';
 import productRoutes from './routes/products.route.js';
+import paymentRoutes from './routes/payments.route.js';
 import cors from 'cors';
+
 
 dotenv.config();
 
@@ -40,6 +42,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/payment', paymentRoutes);
 
 const server = app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');

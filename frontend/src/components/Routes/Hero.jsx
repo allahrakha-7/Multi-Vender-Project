@@ -1,7 +1,20 @@
 import { Link } from "react-router-dom";
 import hero from "../../images/hero.png";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function Hero() {
+  const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const handleOnClick = (e) => {
+      if (!currentUser) {
+        e.preventDefault();
+        toast.error("Signup to create your account!");
+        navigate("/");
+      }
+    };
+
   return (
     <div
       className="relative max-sm:min-h-[102vh] min-h-[70vh] my-6 sm:min-h-[80vh] lg:min-h-[90vh] w-full bg-no-repeat flex items-center justify-center sm:justify-start"
@@ -26,7 +39,7 @@ function Hero() {
           delightful journey from home to heart.
         </p>
 
-        <Link to="/products" className="inline-block">
+        <Link onClick={handleOnClick} to="/products" className="inline-block">
           <div className="w-[140px] sm:w-[160px] bg-gray-950 h-[45px] sm:h-[49px] text-white my-4 sm:my-2 hover:bg-white hover:text-green-900 flex items-center justify-center rounded-xl cursor-pointer transition-all duration-300">
             <span className="font-[Georgia] italic text-lg sm:text-xl">
               Shop Now

@@ -9,7 +9,7 @@ import { addToCart, removeFromCart } from "../redux/reducers/cartSlice.js";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-function ProductDetails({data}) {
+function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -20,7 +20,7 @@ function ProductDetails({data}) {
 
   const { cart } = useSelector((state) => state.cart);
 
-  const isInCart = cart.some((item) => item._id === data._id);
+  const isInCart = product ? cart.some((item) => item._id === product._id) : false;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -52,7 +52,7 @@ function ProductDetails({data}) {
   };
 
     const handleRemoveFromCart = () => {
-      dispatch(removeFromCart(data._id));
+      dispatch(removeFromCart(product._id));
       toast.success("Product removed from cart!");
     };
 
@@ -139,7 +139,7 @@ function ProductDetails({data}) {
             </button>
           ) : (
             <button
-              className="w-full sm:w-auto cursor-pointer bg-blue-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-blue-700 transition"
+              className="w-full sm:w-auto cursor-pointer bg-blue-600 text-white font-semibold py-2 px-3 rounded-md hover:bg-blue-700 transition"
               onClick={handleAddToCart}
             >
               Add to Cart

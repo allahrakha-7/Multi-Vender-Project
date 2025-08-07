@@ -7,11 +7,14 @@ import {
 } from "../../redux/reducers/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "../ProductCard";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function FeaturedProduct() {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.product);
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,8 +35,20 @@ function FeaturedProduct() {
     fetchProducts();
   }, [dispatch]);
 
-  const featuredProducts = products?.filter((item) => item.featuredProducts && item.seller !== currentUser._id).slice(0, 12);
-  const hasExcess = products?.filter((item) => item.featuredProducts && item.seller !== currentUser._id).length > 12;
+  const featuredProducts = products?.filter((item) =>
+    item.featuredProducts && (currentUser ? item.seller !== currentUser._id : true)
+  ).slice(0, 12);
+  const hasExcess = products?.filter((item) =>
+    item.featuredProducts && (currentUser ? item.seller !== currentUser._id : true)
+  ).length > 12;
+
+  const handleOnClick = (e) => {
+    if (!currentUser) {
+      e.preventDefault();
+      toast.error("Signup to create your account!");
+      navigate("/");
+    }
+  };
 
   return (
     <section className="w-full my-2 bg-gradient-to-b from-white to-indigo-50/40">
@@ -66,7 +81,7 @@ function FeaturedProduct() {
           )}
           {hasExcess && (
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-              <Link to="/products">
+              <Link to="/products" onClick={handleOnClick}>
                 <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition">
                   explore more...
                 </button>

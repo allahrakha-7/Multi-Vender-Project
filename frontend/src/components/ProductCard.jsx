@@ -3,27 +3,89 @@ import { IoMdStar } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, removeFromCart } from "../redux/reducers/cartSlice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function ProductCard({ data }) {
+  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.cart);
+  const navigate = useNavigate();
 
   const isInCart = cart.some((item) => item._id === data._id);
 
   const handleAddToCart = () => {
+    if (!currentUser) {
+      toast.error("Signup to create your account!");
+      navigate("/");
+      return;
+    }
     dispatch(addToCart(data));
     toast.success("Added to cart successfully!");
   };
 
   const handleRemoveFromCart = () => {
+    if (!currentUser) {
+      toast.error("Signup to create your account!");
+      navigate("/");
+      return;
+    }
     dispatch(removeFromCart(data._id));
     toast.success("Product removed from cart!");
+  };
+
+  const handleBuyNow = async () => {
+    if (!currentUser) {
+      toast.error("Signup to create your account!");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/payment/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          product: {
+            _id: data._id,
+            name: data.name,
+            price: Math.round(data.discountPrice * 100),
+            image: data.images[0], // First image URL
+          },
+        }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create checkout session");
+      }
+
+      const result = await response.json();
+      if (result.url) {
+        window.location.href = result.url; 
+      } else {
+        throw new Error("No checkout URL received from server");
+      }
+    } catch (error) {
+      toast.error(`Payment error: ${error.message}`);
+      console.error("Checkout error:", error);
+    }
+  };
+
+  const handleOnClick = (e) => {
+    if (!currentUser) {
+      e.preventDefault();
+      toast.error("Signup to create your account!");
+      navigate("/");
+    }
   };
 
   return (
     <>
       <div className="w-full bg-white rounded-lg shadow-sm p-4 relative border cursor-pointer border-gray-400 hover:shadow-md transition-all duration-200">
-        <Link to={`/product/${data._id}`}>
+        <Link onClick={handleOnClick} to={`/product/${data._id}`}>
           <div>
             <img
               src={data.images[0]}
@@ -58,7 +120,7 @@ function ProductCard({ data }) {
         <div className="flex flex-col justify-between sm:flex-row gap-2 mt-4">
           <button
             className="w-full sm:w-auto cursor-pointer bg-green-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-green-700 transition"
-            onClick={() => alert("Buy Now clicked!")}
+            onClick={handleBuyNow}
           >
             Buy Now
           </button>
@@ -67,7 +129,7 @@ function ProductCard({ data }) {
               className="w-full sm:w-auto cursor-pointer bg-red-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-red-700 transition"
               onClick={handleRemoveFromCart}
             >
-              Remove from cart 
+              Remove from cart
             </button>
           ) : (
             <button

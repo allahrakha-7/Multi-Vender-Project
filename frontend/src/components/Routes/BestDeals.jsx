@@ -20,7 +20,6 @@ function BestDeals() {
         const res = await fetch('/api/products', {
           credentials: "include",
         });
-        console.log("Fetch response status:", res.status);
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch products");
         

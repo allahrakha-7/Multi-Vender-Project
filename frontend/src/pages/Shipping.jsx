@@ -1,8 +1,20 @@
 // pages/Shipping.jsx
 import { Link } from "react-router-dom";
+import { IoArrowBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Shipping = () => {
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
   return (
+    <>
+    <IoArrowBack
+        onClick={goBack}
+        className="text-2xl cursor-pointer absolute top-4 max-sm:top-2 max-sm:left-2 left-4 max-sm:text-xl font-semibold"
+      />
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         {/* Header Section */}
@@ -99,6 +111,7 @@ const Shipping = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

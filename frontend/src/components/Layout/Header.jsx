@@ -19,10 +19,10 @@ function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-  const [searchTerm, setSearchTerm] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [profileOptions, setProfileOptions] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const profileRef = useRef();
   const navigate = useNavigate();
 
@@ -63,35 +63,42 @@ function Header() {
     "Others",
   ];
 
-const handleSignOut = async () => {
-  try {
-    dispatch(signOutUserStart());
-    const data = await fetch("/api/auth/sign-out", {
-      method: "GET",
-      credentials: "include",
-    });
-    const result = await data.json();
-    console.log("Response status:", data.status, "Response:", result);
-    if (!data.ok) {
-      dispatch(signOutUserFailure(result.message || "Server error"));
-      toast.error(result.message || "Something went wrong!");
-      return;
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const data = await fetch("/api/auth/sign-out", {
+        method: "GET",
+        credentials: "include",
+      });
+      const result = await data.json();
+      console.log("Response status:", data.status, "Response:", result);
+      if (!data.ok) {
+        dispatch(signOutUserFailure(result.message || "Server error"));
+        toast.error(result.message || "Something went wrong!");
+        return;
+      }
+      dispatch(signOutUserSuccess(result));
+      toast.success(result || "Signed Out Successfully!");
+      navigate("sign-in");
+    } catch (error) {
+      console.error("Fetch error:", error);
+      dispatch(signOutUserFailure(error.message));
+      toast.error(error.message || "Something went wrong!");
     }
-    dispatch(signOutUserSuccess(result));
-    toast.success(result || "Signed Out Successfully!");
-    navigate('sign-in')
-  } catch (error) {
-    console.error("Fetch error:", error);
-    dispatch(signOutUserFailure(error.message));
-    toast.error(error.message || "Something went wrong!");
-  }
-};
+  };
 
   const handleCategorySelect = (category) => {
     setSearchTerm(category);
-    navigate(`/products?category=${encodeURIComponent(category)}`);
-    setIsCategoryOpen(false); 
-    setMobileCategoriesOpen(false); 
+    navigate(`/products?search=${setSearchTerm(category)}`);
+    setIsCategoryOpen(false);
+    setMobileCategoriesOpen(false);
+  };
+
+  const handleProductSelect = (product) => {
+    setSearchTerm(product);
+    navigate(`/products?search=${setSearchTerm(product)}`);
+    setIsProductOpen(false);
+    setMobileProductsOpen(false);
   };
 
   const handleSearchSubmit = (e) => {
@@ -175,14 +182,9 @@ const handleSignOut = async () => {
                     <li
                       key={index}
                       className="px-4 py-1.5 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleProductSelect(product)}
                     >
-                      <Link
-                        to={`/products/${product
-                          .replace(/\s+/g, "-")
-                          .toLowerCase()}`}
-                      >
-                        {product}
-                      </Link>
+                      {product}
                     </li>
                   ))}
                 </ul>
@@ -327,16 +329,12 @@ const handleSignOut = async () => {
                 {mobileProductsOpen && (
                   <ul className="pl-3 py-1 space-y-1">
                     {products.map((product, idx) => (
-                      <li key={idx}>
-                        <Link
-                          to={`/products/${product
-                            .replace(/\s+/g, "-")
-                            .toLowerCase()}`}
-                          className="block py-1 text-sm text-gray-600 hover:text-gray-900"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {product}
-                        </Link>
+                      <li
+                        key={idx}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleProductSelect(product)}
+                      >
+                        {product}
                       </li>
                     ))}
                   </ul>
