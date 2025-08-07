@@ -11,8 +11,8 @@ function Hero() {
         backgroundPosition: "center",
       }}
     >
-      <div className="w-11/12 sm:w-10/12 md:w-9/12 lg:w-3/5 xl:w-1/2 font-[Georgia] text-center sm:text-left px-3 sm:px-8">
-        <h1 className="text-3xl max-sm:text-md sm:text-2xl md:text-4xl lg:text-3xl font-black italic text-gray-950 leading-tight sm:leading-[1.2] capitalize">
+      <div className="w-11/12 sm:w-10/12 md:w-9/12 lg:w-3/5 max-sm:mt-4 xl:w-1/2 font-[Georgia] text-center sm:text-left px-3 sm:px-8">
+        <h1 className="text-3xl max-sm:text-md sm:text-2xl  md:text-4xl lg:text-3xl font-black italic text-gray-950 leading-tight sm:leading-[1.2] capitalize">
           Welcome to Vendify <br />Your best ever
           shopping platform
         </h1>

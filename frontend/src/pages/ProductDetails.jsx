@@ -4,27 +4,35 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import { useDispatch } from "react-redux";
+import { addToCart, removeFromCart } from "../redux/reducers/cartSlice.js";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
-function ProductDetails() {
+function ProductDetails({data}) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
   const [product, setProduct] = useState(state?.product || null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+
+  const { cart } = useSelector((state) => state.cart);
+
+  const isInCart = cart.some((item) => item._id === data._id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/product/${id}`, {
+        const response = await fetch(`/api/products/${id}`, {
           withCredentials: true,
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || "Failed to fetch product");
         setProduct(data);
-        // Check if user has already rated
       } catch (err) {
         setError(err.message || "Failed to fetch product details");
       } finally {
@@ -36,13 +44,25 @@ function ProductDetails() {
     else setLoading(false);
   }, [id, product]);
 
+  const handleAddToCart = () => {
+    if (product) {
+      dispatch(addToCart({ ...product, quantity: 1 }));
+      toast.success("Product added to cart!");
+    }
+  };
+
+    const handleRemoveFromCart = () => {
+      dispatch(removeFromCart(data._id));
+      toast.success("Product removed from cart!");
+    };
+
   if (loading) return <div className="text-center py-20">Loading product details...</div>;
   if (error) return <div className="text-center text-red-500 py-20">Error: {error}</div>;
   if (!product) return <div className="text-center text-red-500 py-20">Product not found</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 py-4 px-2 sm:px-6 md:px-12">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="w-full mx-auto bg-white rounded-lg shadow-md overflow-hidden"> {/* Changed max-w-6xl to w-full */}
         <div className="w-full h-64 sm:h-96 md:h-[500px]">
           {product.images && product.images.length > 1 ? (
             <Swiper
@@ -110,12 +130,21 @@ function ProductDetails() {
             >
               Buy Now
             </button>
+            {isInCart ? (
             <button
-              className="w-full sm:w-auto bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition"
-              onClick={() => alert("Add to Cart clicked!")}
+              className="w-full sm:w-auto cursor-pointer bg-red-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-red-700 transition"
+              onClick={handleRemoveFromCart}
+            >
+              Remove from cart 
+            </button>
+          ) : (
+            <button
+              className="w-full sm:w-auto cursor-pointer bg-blue-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-blue-700 transition"
+              onClick={handleAddToCart}
             >
               Add to Cart
             </button>
+          )}
           </div>
           <button
             className="w-full sm:w-auto mt-2 text-sm sm:text-base md:text-lg bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition"

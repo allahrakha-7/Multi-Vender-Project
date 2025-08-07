@@ -65,7 +65,14 @@ const productSchema = new mongoose.Schema({
     ref: 'User', 
     required: true,
   },
-
+  bestDeals: { 
+    type: Boolean, 
+    default: false 
+  },
+  featuredProducts: {
+    type: Boolean,
+    default: false 
+  },
   }, {timestamps: true}
 );
 

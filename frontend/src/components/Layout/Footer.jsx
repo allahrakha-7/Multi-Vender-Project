@@ -11,15 +11,15 @@ function Footer() {
  const footercompanyLinks = [
    {
      name: "Game & Video",
-     link: "/games"
+     link: "/gamesandvideos"
    },
    {
      name: "Phone & Tablets",
-     link: "/phones"
+     link: "/phonesandtablets"
    },
    {
      name: "Computers & Laptop",
-     link: "/computers"
+     link: "/computersandlaptops"
    },
    {
      name: "Sport Watches",
@@ -34,15 +34,15 @@ function Footer() {
  const footerSupportLinks = [
    {
      name: "FAQs",
-     link: "/faq"
+     link: "/faqs"
    },
    {
      name: "Reviews",
-     link: "/reviews"
+     link: "/reviews-support"
    },
    {
      name: "Contact Us",
-     link: "/contact"
+     link: "/contact-us"
    },
    {
      name: "Shipping",
@@ -57,7 +57,7 @@ function Footer() {
  const footerProductLinks = [
    {
      name: "About us",
-     link: "/about"
+     link: "/about-us"
    },
    {
      name: "Careers",
@@ -69,7 +69,7 @@ function Footer() {
    },
    {
      name: "Our Blog",
-     link: "/blog"
+     link: "/blogs"
    },
    {
      name: "Reviews",
@@ -99,7 +99,6 @@ function Footer() {
      </div>
 
      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:px-8 px-5 py-16">
-       
        <ul className="px-5 text-center sm:text-start flex sm:block flex-col items-center sm:items-start">
          <div className="flex items-center mb-4">
            <MdOutlineShoppingCart className="text-[42px] text-gray-700 font-extralight" />

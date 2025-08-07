@@ -50,7 +50,7 @@ function SignIn () {
             navigate('/');
         } catch (error) {
             dispatch(signInFailure(error.message));
-            toast.error(error.message);    
+            toast.error('User not found. Please enter right details or create account!');    
         }
     };
 

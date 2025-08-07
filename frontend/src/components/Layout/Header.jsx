@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { AiOutlineShoppingCart } from "react-icons/ai";
@@ -24,6 +24,7 @@ function Header() {
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [profileOptions, setProfileOptions] = useState(false);
   const profileRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -62,21 +63,41 @@ function Header() {
     "Others",
   ];
 
-  const handleSignOut = async () => {
-    try {
-      dispatch(signOutUserStart());
-      const data = await fetch("/api/auth/signout");
-      const result = await data.json(); // Parse JSON response
-      if (data.success === false || !result.success) {
-        dispatch(signOutUserFailure(result.message));
-        toast.error(result.message || "Something went wrong!");
-        return;
-      }
-      dispatch(signOutUserSuccess(result));
-      toast.success(result.message || "Signed Out Successfully!");
-    } catch (error) {
-      dispatch(signOutUserFailure(error.message));
-      toast.error(error.message || "Something went wrong!");
+const handleSignOut = async () => {
+  try {
+    dispatch(signOutUserStart());
+    const data = await fetch("/api/auth/sign-out", {
+      method: "GET",
+      credentials: "include",
+    });
+    const result = await data.json();
+    console.log("Response status:", data.status, "Response:", result);
+    if (!data.ok) {
+      dispatch(signOutUserFailure(result.message || "Server error"));
+      toast.error(result.message || "Something went wrong!");
+      return;
+    }
+    dispatch(signOutUserSuccess(result));
+    toast.success(result || "Signed Out Successfully!");
+    navigate('sign-in')
+  } catch (error) {
+    console.error("Fetch error:", error);
+    dispatch(signOutUserFailure(error.message));
+    toast.error(error.message || "Something went wrong!");
+  }
+};
+
+  const handleCategorySelect = (category) => {
+    setSearchTerm(category);
+    navigate(`/products?category=${encodeURIComponent(category)}`);
+    setIsCategoryOpen(false); 
+    setMobileCategoriesOpen(false); 
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
     }
   };
 
@@ -109,7 +130,7 @@ function Header() {
             </Link>
 
             <div className="hidden sm:flex flex-1 justify-center">
-              <div className="relative w-full max-w-md">
+              <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
                 <input
                   type="text"
                   placeholder="Search..."
@@ -118,12 +139,12 @@ function Header() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <button
-                  onClick={(e) => e.preventDefault()}
+                  type="submit"
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
                   <FaSearch className="text-gray-600 text-base max-lg:hidden" />
                 </button>
-              </div>
+              </form>
             </div>
           </div>
 
@@ -190,14 +211,9 @@ function Header() {
                     <li
                       key={index}
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleCategorySelect(category)}
                     >
-                      <Link
-                        to={`/categories/${category
-                          .replace(/\s+/g, "-")
-                          .toLowerCase()}`}
-                      >
-                        {category}
-                      </Link>
+                      {category}
                     </li>
                   ))}
                 </ul>
@@ -272,7 +288,7 @@ function Header() {
               </button>
             </div>
 
-            <div className="relative flex items-center mb-6">
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center mb-6">
               <input
                 type="text"
                 placeholder="Search..."
@@ -281,12 +297,12 @@ function Header() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <button
-                onClick={(e) => e.preventDefault()}
+                type="submit"
                 className="absolute right-3"
               >
                 <FaSearch className="text-gray-700 text-base" />
               </button>
-            </div>
+            </form>
 
             <nav className="space-y-3">
               <Link
@@ -341,16 +357,12 @@ function Header() {
                 {mobileCategoriesOpen && (
                   <ul className="pl-3 py-1 space-y-1">
                     {categories.map((category, idx) => (
-                      <li key={idx}>
-                        <Link
-                          to={`/categories/${category
-                            .replace(/\s+/g, "-")
-                            .toLowerCase()}`}
-                          className="block py-1 text-sm text-gray-600 hover:text-gray-900"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {category}
-                        </Link>
+                      <li
+                        key={idx}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleCategorySelect(category)}
+                      >
+                        {category}
                       </li>
                     ))}
                   </ul>

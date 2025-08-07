@@ -160,6 +160,7 @@ function Profile() {
             dispatch(deleteUserStart());
             const res = await fetch(`/api/user/delete/${currentUser._id}`, {
                 method: 'DELETE',
+                credentials:'include'
             });
 
             const data = await res.json();

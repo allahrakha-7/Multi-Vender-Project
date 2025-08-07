@@ -1,116 +1,140 @@
-import { Server as socketIO } from "socket.io";
-import http from 'http';
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
+// socket/index.js
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import cors from "cors";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import { sendMessage, loadInitialMessages, markMessageAsSeen } from "../backend/controllers/messages.controller.js";
 
 dotenv.config({ path: "./.env" });
 
 const app = express();
 const server = http.createServer(app);
 
-const io = new socketIO(server, {
-    cors: {
-        origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],
-        methods: ["GET", "POST"],
-        credentials: true
-    }
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 app.use(cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],
-    credentials: true
+  origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],
+  credentials: true,
 }));
-
 app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.send("Welcome from socket server!");
+// MongoDB Connection
+mongoose.connect(process.env.MONGO).then(() => {
+  console.log("MongoDB connected successfully");
+}).catch((err) => {
+  console.error("MongoDB connection error:", err);
 });
 
+app.get("/", (req, res) => {
+  res.send("Welcome from socket server!");
+});
+
+// Store connected users
 let users = [];
 
 const addUser = (userId, socketId) => {
-    !users.some((user) => user.userId === userId) && users.push({ userId, socketId });
+  if (!users.some((user) => user.userId === userId)) {
+    users.push({ userId, socketId });
+    io.emit("getUsers", users);
+    console.log(`👤 User added: ${userId} with socketId ${socketId}`);
+  }
 };
 
 const removeUser = (socketId) => {
-    users = users.filter((user) => user.socketId !== socketId);
+  users = users.filter((user) => user.socketId !== socketId);
+  io.emit("getUsers", users);
+  console.log(`👤 User removed: ${socketId}`);
 };
 
-const getUser = (receiverId) => {
-    return users.find((user) => user.userId === receiverId);
+const getUser = (userId) => {
+  return users.find((user) => user.userId === userId);
 };
 
-const createMessage = ({ senderId, receiverId, text, images }) => ({
-    senderId,
-    receiverId,
-    text,
-    images,
-    seen: false,
-});
+// Simple chatbot logic
+const chatbotResponses = {
+  "hello": "Hi there! How can I assist you today?",
+  "help": "Sure, I'm here to help! What do you need assistance with?",
+  "bye": "Goodbye! Feel free to return if you need more help.",
+  "default": "I'm not sure how to respond to that. Try 'help' or 'hello'!",
+};
 
-const messages = {};
+const handleChatbot = (messageText, senderId) => {
+  const lowerCaseText = messageText.toLowerCase();
+  for (const [intent, response] of Object.entries(chatbotResponses)) {
+    if (lowerCaseText.includes(intent)) {
+      return {
+        senderId: "chatbot",
+        receiverId: senderId,
+        text: response,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+    }
+  }
+  return {
+    senderId: "chatbot",
+    receiverId: senderId,
+    text: chatbotResponses.default,
+    timestamp: new Date().toLocaleTimeString(),
+  };
+};
 
 io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+  console.log(`User connected: ${socket.id} from ${socket.handshake.address}`);
 
-    socket.on("addUser", (userId) => {
-        addUser(userId, socket.id);
-        io.emit("getUsers", users);
-        console.log(`👤 User added: ${userId}`);
-    });
+  socket.on("addUser", (userId) => {
+    addUser(userId, socket.id);
+  });
 
-    socket.on("sendMessage", ({ senderId, receiverId, text, images }) => {
-        const message = createMessage({ senderId, receiverId, text, images });
+  socket.on("sendMessage", (data) => {
+    sendMessage(io, socket, data, users); // Send user message
+    // Trigger chatbot response
+    const chatbotMessage = handleChatbot(data.text, data.senderId);
+    sendMessage(io, socket, chatbotMessage, users); // Send chatbot reply
+  });
 
-        const user = getUser(receiverId);
+  socket.on("loadInitialMessages", (currentUser) => {
+    loadInitialMessages(io, socket, currentUser);
+  });
 
-        if (!messages[receiverId]) {
-            messages[receiverId] = [message];
-        } else {
-            messages[receiverId].push(message);
-        }
+  socket.on("messageSeen", (data) => {
+    markMessageAsSeen(io, socket, data);
+  });
 
-        if (user?.socketId) {
-            io.to(user.socketId).emit("getMessage", message);
-            console.log(`💬 Message sent from ${senderId} to ${receiverId}`);
-        }
-    });
+  socket.on("typing", () => {
+    socket.broadcast.emit("typing");
+    console.log(`${socket.id} is typing`);
+  });
 
-    socket.on("messageSeen", ({ senderId, receiverId, messageId }) => {
-        const user = getUser(senderId);
+  socket.on("stopTyping", () => {
+    socket.broadcast.emit("stopTyping");
+    console.log(`${socket.id} stopped typing`);
+  });
 
-        if (messages[senderId]) {
-            const message = messages[senderId].find(
-                (message) =>
-                    message.receiverId === receiverId && message.id === messageId);
-            if (message) {
-                message.seen = true;
+  socket.on("message", (message) => {
+    console.log(`Received message:`, message);
+    const supportMessage = {
+      senderId: "support",
+      receiverId: message.senderId,
+      text: "Thank you for your message! We'll get back to you soon.",
+      timestamp: new Date().toLocaleTimeString(),
+    };
+    sendMessage(io, socket, supportMessage, users);
+  });
 
-                if (user?.socketId) {
-                    io.to(user.socketId).emit("messageSeen", { senderId, receiverId, messageId });
-                }
-            }
-        }
-    });
-
-    socket.on("updateLastMessage", ({ lastMessage, lastMessagesId }) => {
-        io.emit("getLastMessage", {
-            lastMessage,
-            lastMessagesId,
-        });
-    });
-
-    socket.on("disconnect", () => {
-        console.log(`User disconnected: ${socket.id}`);
-        removeUser(socket.id);
-        io.emit("getUsers", users);
-    });
+  socket.on("disconnect", (reason) => {
+    console.log(`User disconnected: ${socket.id}, Reason: ${reason}`);
+    removeUser(socket.id);
+  });
 });
 
-const PORT = process.env.PORT || 4000;
-
-server.listen(PORT, () => {
-    console.log(`Socket server running on port ${PORT}`);
+server.listen(4000, () => {
+  console.log(`Socket server running on port 4000!`);
 });

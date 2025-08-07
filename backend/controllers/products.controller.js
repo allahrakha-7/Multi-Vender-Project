@@ -3,7 +3,7 @@ import errorHandler from "../utils/errorHandler.js";
 
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, description, category, tags, originalPrice, discountPrice, stock, images, shopId, shop, userRef } = req.body;
+    const { name, description, category, tags, originalPrice, discountPrice, stock, images, shopId, shop, userRef, bestDeals, featuredProducts, } = req.body;
     if (!name || !description || !category || !discountPrice || !stock || images.length < 1) {
       return next(errorHandler(400, "All required fields must be provided"));
     }
@@ -20,6 +20,8 @@ export const createProduct = async (req, res, next) => {
       shopId,
       shop,
       userRef,
+      bestDeals,
+      featuredProducts,
       ratings: 0,
       reviews: [],
     });

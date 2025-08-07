@@ -40,6 +40,8 @@ function CreateProduct() {
     images: [],
     shop: "",
     userRef: currentUser?._id || "",
+    bestDeals: false,
+    featuredProducts: false,
   });
   const navigate = useNavigate();
 
@@ -48,7 +50,7 @@ function CreateProduct() {
       if (!currentUser) return;
       try {
         dispatch(fetchProductsStart());
-        const res = await fetch(`/api/product/get/${currentUser._id}`, {
+        const res = await fetch(`/api/products/get/${currentUser._id}`, {
           method: "GET",
           credentials: "include",
         });
@@ -63,8 +65,11 @@ function CreateProduct() {
   }, [dispatch, currentUser]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleImageUpload = async (e) => {
@@ -121,7 +126,7 @@ function CreateProduct() {
       const userRef = currentUser._id;
       const shopId = currentUser._id;
       const shop = formData.shop;
-      const res = await fetch("/api/product/create", {
+      const res = await fetch("/api/products/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -142,6 +147,8 @@ function CreateProduct() {
         images: [],
         shop: "",
         userRef: currentUser?._id || "",
+        bestDeals: false,
+        featuredProducts: false,
       });
     } catch (error) {
       dispatch(createProductFailure(error.message));
@@ -158,7 +165,7 @@ function CreateProduct() {
     }
     try {
       dispatch(deleteProductStart());
-      const res = await fetch(`/api/product/delete/${productId}`, {
+      const res = await fetch(`/api/products/delete/${productId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -168,7 +175,7 @@ function CreateProduct() {
       dispatch(deleteProductSuccess(productId));
       toast.success("Product deleted successfully!");
       dispatch(fetchProductsStart());
-      const fetchRes = await fetch(`/api/product/get/${currentUser._id}`, {
+      const fetchRes = await fetch(`/api/products/get/${currentUser._id}`, {
         method: "GET",
         credentials: "include",
       });
@@ -181,7 +188,6 @@ function CreateProduct() {
     }
   };
 
-  // Enhanced star rating function
   const getStarRating = (rating) => {
     const totalStars = 5;
     const fullStars = Math.floor(rating);
@@ -189,15 +195,12 @@ function CreateProduct() {
     const emptyStars = totalStars - fullStars - (hasHalfStar ? 1 : 0);
     const stars = [];
 
-    // Add full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(<span key={`full-${i}`} className="text-yellow-400 text-lg">★</span>);
     }
-    // Add half star if applicable
     if (hasHalfStar) {
       stars.push(<span key="half" className="text-yellow-400 text-lg">½</span>);
     }
-    // Add empty stars
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<span key={`empty-${i}`} className="text-gray-300 text-lg">☆</span>);
     }
@@ -216,7 +219,8 @@ function CreateProduct() {
             <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-green-600 flex items-center gap-2">
               <FaPlus /> Create Product
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4">
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
                   Product Name:
@@ -353,6 +357,35 @@ function CreateProduct() {
                 ))}
               </div>
             </div>
+            {/* Enhanced Checkbox Section */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-4">
+              <label className="flex items-center gap-2 text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                <input
+                  type="checkbox"
+                  name="bestDeals"
+                  checked={formData.bestDeals}
+                  onChange={handleChange}
+                  className="hidden peer"
+                />
+                <span className="w-5 h-5 border-2 border-green-600 rounded flex items-center justify-center bg-white peer-checked:bg-green-600 peer-checked:text-white transition-colors duration-200">
+                  <FaPlus className="text-xs opacity-0 peer-checked:opacity-100" />
+                </span>
+                Best Deals
+              </label>
+              <label className="flex items-center gap-2 text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                <input
+                  type="checkbox"
+                  name="featuredProducts"
+                  checked={formData.featuredProducts}
+                  onChange={handleChange}
+                  className="hidden peer"
+                />
+                <span className="w-5 h-5 border-2 border-green-600 rounded flex items-center justify-center bg-white peer-checked:bg-green-600 peer-checked:text-white transition-colors duration-200">
+                  <FaPlus className="text-xs opacity-0 peer-checked:opacity-100" />
+                </span>
+                Featured Products
+              </label>
+            </div>
             <button
               type="submit"
               disabled={loading}
@@ -398,21 +431,22 @@ function CreateProduct() {
                       </Swiper>
                     ) : (
                       <img
-                        src={product.images?.[0] || "/placeholder-image.jpg"}
-                        alt={product.name}
+                      src={product.images?.[0] || "/placeholder-image.jpg"}
+                      alt={product.name}
                         className="w-full h-full object-contain"
-                      />
-                    )}
+                        />
+                      )}
+                      <hr className="border-t border-gray-300 my-2" />
                     <button
                       onClick={() => handleRemoveProduct(product._id)}
-                      className="absolute top-1 sm:top-2 md:top-2 right-2 sm:right-1 md:right-1 bg-red-600 text-white rounded-full w-5 sm:w-6 md:w-7 h-5 sm:h-6 md:h-7 flex items-center justify-center text-xs sm:text-sm hover:bg-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 z-10"
+                      className="absolute top-1 sm:top-2 md:top-2 right-2 sm:right-1 md:right-1 bg-red-600 text-white rounded-full w-5 sm:w-6 md:w-6 h-5 sm:h-6 md:h-6 flex items-center justify-center text-xs sm:text-sm hover:bg-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 z-10"
                       aria-label={`Delete ${product.name}`}
                     >
                       <RxCross2 />
                     </button>
                   </div>
 
-                  <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-green-700 line-clamp-1">
+                  <h4 className="text-lg sm:text-xl md:text-[22px] font-bold text-green-700 line-clamp-1">
                     {product.name}
                   </h4>
                   <p className="text-sm sm:text-base md:text-lg text-gray-600 line-clamp-2 break-words">
