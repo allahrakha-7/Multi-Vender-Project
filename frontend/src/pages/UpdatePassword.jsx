@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineUser, AiOutlineMail, AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { updateUserStart, updateUserSuccess, updateUserFailure } from "../redux/reducers/userSlice.js";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 function UpdatePassword() {
     const [formData, setFormData] = useState({
@@ -10,14 +13,43 @@ function UpdatePassword() {
     });
     const [password, setPassword] = useState('');
     const [visible, setVisible] = useState(false);
+    // eslint-disable-next-line no-unused-vars
+    const [updateSuccess, setUpdateSuccess] = useState(false);
+    const dispatch = useDispatch();
+
+    const { currentUser, loading, } = useSelector((state) => state.user);
 
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        try {
+            dispatch(updateUserStart());
+            const res = await fetch(`/api/user/update/${currentUser._id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'appilication/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await res.json();
+
+            if (data.success === false) {
+                dispatch(updateUserFailure(data.message));
+                return;
+            }
+            dispatch(updateUserSuccess(data));
+            setUpdateSuccess(true);
+            toast.success('User updated successfully!');
+        } catch (error) {
+            dispatch(updateUserFailure(error.message));
+            toast.error('Something went wrong. User not updated!');
+        }
     };
 
     return (
@@ -83,7 +115,7 @@ function UpdatePassword() {
                                             )}
                                         </div>
                     <Link to='/sign-in' className="bg-green-600 text-lg cursor-pointer text-white p-3 text-center rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-                        Update
+                        {loading ? 'UPDATING...' : 'UPDATE'}
                     </Link>
                 </form>
             </div>
