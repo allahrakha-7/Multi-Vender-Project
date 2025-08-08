@@ -94,14 +94,7 @@ const TermsOfService = () => {
                     </section>
 
                     <section className="mb-8">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">11. Governing Law</h2>
-                        <p className="text-gray-700 leading-relaxed">
-                            These Terms are governed by the laws of [Your Country/State], and any disputes will be resolved in the courts of [Your City/State].
-                        </p>
-                    </section>
-
-                    <section className="mb-8">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">12. Contact Information</h2>
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">11. Contact Information</h2>
                         <p className="text-gray-700 leading-relaxed">
                             For questions about these Terms, contact us at support@vendify.com or through our <Link to="/contact" className="text-[#00bf63] hover:underline">Contact Page</Link>.
                         </p>

@@ -35,7 +35,7 @@ export const createProduct = async (req, res, next) => {
 
 export const getProduct = async (req, res, next) => {
   try {
-    const products = await Product.find({ userRef: req.params.id });
+    const products = await Product.find({ userRef: req.params.id }).sort({ createdAt: -1 });
     if (!products || products.length === 0) {
       return res.status(404).json({ message: "No product found for this user!" });
     }

@@ -288,7 +288,7 @@ function Profile() {
 
                             <Link to='/sign-up'><button
                                 type="button"
-                                className="mt-4 bg-red-600 text-white py-2 px-4 max-sm:px-2 max-sm:py-1  rounded-xl hover:opacity-95 cursor-pointer"
+                                className="mt-4 bg-red-600 text-white py-2 px-4 max-sm:px-2 max-sm:py-2  rounded-xl hover:opacity-95 cursor-pointer"
                                 disabled={loading} onClick={handleDeleteUser}
                             >
                                 Delete Accuont
