@@ -17,7 +17,7 @@ function BestDeals() {
     const fetchProducts = async () => {
       try {
         dispatch(fetchOtherUsersProductsStart());
-        const res = await fetch('/api/products', {
+        const res = await fetch('/api/products/all', {
           credentials: "include",
         });
         const data = await res.json();
@@ -43,7 +43,7 @@ function BestDeals() {
     <section className="w-full my-2 bg-gradient-to-b from-white to-indigo-50/40">
       <div className="w-11/12 mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-[27px] md:text-[32px] font-[700] font-Roboto relative">
+          <h2 className="text-[27px] mt-2 md:text-[32px] font-[700] font-Roboto relative">
             Best Deals
             <span className="absolute -bottom-2 left-0 h-[3px] w-10 rounded-full bg-yellow-500/80" />
           </h2>

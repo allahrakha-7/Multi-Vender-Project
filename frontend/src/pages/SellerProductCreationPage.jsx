@@ -47,7 +47,10 @@ function CreateProduct() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      if (!currentUser) return;
+      if (!currentUser) {
+        toast.error("Please log in to view your products.");
+        return;
+      }
       try {
         dispatch(fetchProductsStart());
         const res = await fetch(`/api/products/get/${currentUser._id}`, {
@@ -55,7 +58,9 @@ function CreateProduct() {
           credentials: "include",
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch products");
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to fetch your products");
+        }
         dispatch(fetchProductsSuccess(data));
       } catch (err) {
         dispatch(fetchProductsFailure(err.message));
@@ -112,8 +117,8 @@ function CreateProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!currentUser) {
-      toast.error("Please log in first!");
+    if (currentUser.role !== 'seller') {
+      toast.error('Update your profile to seller account then create products');
       return;
     }
     if (formData.images.length < 1) {
@@ -150,15 +155,21 @@ function CreateProduct() {
         bestDeals: false,
         featuredProducts: false,
       });
+      const fetchRes = await fetch(`/api/products/get/${currentUser._id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const fetchData = await fetchRes.json();
+      if (fetchRes.ok) dispatch(fetchProductsSuccess(fetchData.filter(product => product.userRef === currentUser._id)));
     } catch (error) {
       dispatch(createProductFailure(error.message));
-      toast.error(error.message || "Something went wrong while uploading.");
+      toast.error(error.message || "Error creating product.");
     } finally {
       setUploading(false);
     }
   };
 
-  const handleRemoveProduct = async (productId) => {
+const handleRemoveProduct = async (productId) => {
     if (!productId) {
       toast.error("Invalid product ID");
       return;
@@ -180,21 +191,20 @@ function CreateProduct() {
         credentials: "include",
       });
       const fetchData = await fetchRes.json();
-      if (fetchRes.ok) dispatch(fetchProductsSuccess(fetchData));
+      if (fetchRes.ok) dispatch(fetchProductsSuccess(fetchData.filter(product => product.userRef === currentUser._id)));
       else throw new Error(fetchData.message || "Failed to refresh products");
     } catch (error) {
       dispatch(deleteProductFailure(error.message));
-      toast.error(error.message || "Something went wrong while deleting.");
+      toast.error(error.message || "Error deleting product.");
     }
   };
 
-  const getStarRating = (rating) => {
+const getStarRating = (rating) => {
     const totalStars = 5;
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.25 && rating % 1 < 0.75;
     const emptyStars = totalStars - fullStars - (hasHalfStar ? 1 : 0);
     const stars = [];
-
     for (let i = 0; i < fullStars; i++) {
       stars.push(<span key={`full-${i}`} className="text-yellow-400 text-lg">★</span>);
     }
@@ -204,9 +214,9 @@ function CreateProduct() {
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<span key={`empty-${i}`} className="text-gray-300 text-lg">☆</span>);
     }
-
     return stars;
   };
+
 
   return (
     <>
@@ -219,7 +229,7 @@ function CreateProduct() {
             <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-green-600 flex items-center gap-2">
               <FaPlus /> Create Product
             </h2>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label className="block text-sm sm:text-base md:text-lg font-medium text-gray-700">
@@ -358,7 +368,7 @@ function CreateProduct() {
               </div>
             </div>
             {/* Enhanced Checkbox Section */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-4">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-4">
               <label className="flex items-center gap-2 text-sm sm:text-base md:text-lg font-medium text-gray-700">
                 <input
                   type="checkbox"
@@ -431,12 +441,12 @@ function CreateProduct() {
                       </Swiper>
                     ) : (
                       <img
-                      src={product.images?.[0] || "/placeholder-image.jpg"}
-                      alt={product.name}
+                        src={product.images?.[0] || "/placeholder-image.jpg"}
+                        alt={product.name}
                         className="w-full h-full object-contain"
-                        />
-                      )}
-                      <hr className="border-t border-gray-300 my-2" />
+                      />
+                    )}
+                    <hr className="border-t border-gray-300 my-2" />
                     <button
                       onClick={() => handleRemoveProduct(product._id)}
                       className="absolute top-1 sm:top-2 md:top-2 right-2 sm:right-1 md:right-1 bg-red-600 text-white rounded-full w-5 sm:w-6 md:w-6 h-5 sm:h-6 md:h-6 flex items-center justify-center text-xs sm:text-sm hover:bg-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 z-10"
@@ -465,8 +475,8 @@ function CreateProduct() {
                     <span className="ml-auto text-xs sm:text-xs md:text-base font-semibold bg-yellow-100 text-yellow-800 px-2 rounded-full">
                       {product.originalPrice && product.discountPrice
                         ? Math.round(
-                            ((product.originalPrice - product.discountPrice) / product.originalPrice) * 100
-                          ) || 0
+                          ((product.originalPrice - product.discountPrice) / product.originalPrice) * 100
+                        ) || 0
                         : "0"}
                       % OFF
                     </span>

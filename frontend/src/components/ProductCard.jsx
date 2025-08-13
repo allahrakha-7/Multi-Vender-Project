@@ -33,47 +33,7 @@ function ProductCard({ data }) {
     toast.success("Product removed from cart!");
   };
 
-  const handleBuyNow = async () => {
-    if (!currentUser) {
-      toast.error("Signup to create your account!");
-      navigate("/");
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/payment/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          product: {
-            _id: data._id,
-            name: data.name,
-            price: Math.round(data.discountPrice * 100),
-            image: data.images[0], // First image URL
-          },
-        }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create checkout session");
-      }
-
-      const result = await response.json();
-      if (result.url) {
-        window.location.href = result.url; 
-      } else {
-        throw new Error("No checkout URL received from server");
-      }
-    } catch (error) {
-      toast.error(`Payment error: ${error.message}`);
-      console.error("Checkout error:", error);
-    }
-  };
-
+  
   const handleOnClick = (e) => {
     if (!currentUser) {
       e.preventDefault();
@@ -118,12 +78,13 @@ function ProductCard({ data }) {
           </div>
         </Link>
         <div className="flex flex-col justify-between sm:flex-row gap-2 mt-4">
+          <Link to='/placeorder'>
           <button
             className="w-full sm:w-auto cursor-pointer bg-green-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-green-700 transition"
-            onClick={handleBuyNow}
           >
             Buy Now
           </button>
+          </Link>
           {isInCart ? (
             <button
               className="w-full sm:w-auto cursor-pointer bg-red-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-red-700 transition"

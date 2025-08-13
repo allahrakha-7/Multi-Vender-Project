@@ -1,5 +1,6 @@
 import Product from "../model/products.model.js";
 import errorHandler from "../utils/errorHandler.js";
+import mongoose from "mongoose";
 
 export const createProduct = async (req, res, next) => {
   try {
@@ -35,12 +36,21 @@ export const createProduct = async (req, res, next) => {
 
 export const getProduct = async (req, res, next) => {
   try {
-    const products = await Product.find({ userRef: req.params.id }).sort({ createdAt: -1 });
-    if (!products || products.length === 0) {
-      return res.status(404).json({ message: "No product found for this user!" });
+    const userId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return next (errorHandler(400, 'Invalid user ID!'));
+    }
+    const products = await Product.find({ userRef: userId }).sort({ createdAt: -1 });
+    if (!products.length) {
+      return res.status(200).json([]);
+    }
+    
+    if (!req.user || !req.user.id || userId !== req.user.id.toString()) {
+      return next(errorHandler(403, "Unauthorized access"));
     }
     res.status(200).json(products);
   } catch (error) {
+
     next(errorHandler(500, error.message));
   }
 };
@@ -55,7 +65,8 @@ export const getProductDetails = async (req, res, next) => {
   }
 };
 
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res, next) => {
+  try{
   const currentUserId = req.user?._id;
   let query = {};
 
@@ -65,6 +76,9 @@ export const getAllProducts = async (req, res) => {
 
   const products = await Product.find(query);
   res.status(200).json(products);
+  } catch(error) {
+    next(errorHandler(500, error.message));
+  }
 };
 
 export const deleteProductCard = async (req, res, next) => {

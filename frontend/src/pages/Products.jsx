@@ -25,7 +25,7 @@ function ProductsPage() {
     const fetchProducts = async () => {
       try {
         dispatch(fetchOtherUsersProductsStart());
-        const res = await fetch("/api/products", {
+        const res = await fetch("/api/products/all", {
           credentials: "include",
         });
         const data = await res.json();
@@ -118,14 +118,14 @@ function ProductsPage() {
           className="text-2xl cursor-pointer absolute top-25 max-sm:top-21 max-sm:left-2 left-4 max-sm:text-xl font-semibold"
         />
         <div className="w-11/12 mx-auto py-6 ">
-          <h2 className="text-[27px] md:text-[32px] font-[700] font-Roboto">
+          <h2 className="text-[27px] mt-3 md:text-[32px] font-[700] font-Roboto">
             All Products
           </h2>
           <h3 className="text-[18px] md:text-[18px] font-[600] font-Roboto">
             Search for more exciting products
           </h3>
         </div>
-        <div className="w-11/12 mx-auto py-6 ">
+        <div className="w-11/12 mx-auto">
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 max-sm:m-2 lg:grid-cols-4 gap-5 mx-2 md:gap-6 xl:gap-7">
           {loading ? (

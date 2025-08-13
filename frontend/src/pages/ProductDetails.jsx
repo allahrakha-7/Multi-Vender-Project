@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
@@ -7,6 +7,7 @@ import "swiper/css/navigation";
 import { useDispatch } from "react-redux";
 import { addToCart, removeFromCart } from "../redux/reducers/cartSlice.js";
 import { useSelector } from "react-redux";
+import { IoArrowBack } from "react-icons/io5";
 import { toast } from "react-toastify";
 
 function ProductDetails() {
@@ -27,14 +28,15 @@ function ProductDetails() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/products/${id}`, {
-          withCredentials: true,
+        const res = await fetch(`/api/products/details/${id}`, {
+          credentials: 'include',
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Failed to fetch product");
+        const data = await res.json();
+        if (!res.ok) throw new Error("Failed to fetch product");
         setProduct(data);
+      // eslint-disable-next-line no-unused-vars
       } catch (err) {
-        setError(err.message || "Failed to fetch product details");
+        setError("Failed to fetch product details");
       } finally {
         setLoading(false);
       }
@@ -43,6 +45,10 @@ function ProductDetails() {
     if (!product) fetchProduct();
     else setLoading(false);
   }, [id, product]);
+
+  const goBack = () => {
+    navigate(-1);
+  };
 
   const handleAddToCart = () => {
     if (product) {
@@ -61,15 +67,21 @@ function ProductDetails() {
   if (!product) return <div className="text-center text-red-500 py-20">Product not found</div>;
 
   return (
+
+    <>
+          <IoArrowBack
+              onClick={goBack}
+              className="text-2xl cursor-pointer absolute top-4 max-sm:top-2 max-sm:left-2 left-4 max-sm:text-xl font-semibold"
+            />
     <div className="min-h-screen bg-gray-100 py-4 px-2 sm:px-6 md:px-12">
-      <div className="w-full mx-auto bg-white rounded-lg shadow-md overflow-hidden"> {/* Changed max-w-6xl to w-full */}
+      <div className="w-full mx-auto bg-white rounded-lg shadow-md overflow-hidden">
         <div className="w-full h-64 sm:h-96 md:h-[500px]">
           {product.images && product.images.length > 1 ? (
             <Swiper
-              navigation={true}
-              modules={[Navigation]}
-              slidesPerView={1}
-              className="w-full h-full"
+            navigation={true}
+            modules={[Navigation]}
+            slidesPerView={1}
+            className="w-full h-full"
             >
               {product.images.map((img, i) => (
                 <SwiperSlide key={i}>
@@ -83,9 +95,9 @@ function ProductDetails() {
             </Swiper>
           ) : product.images && product.images[0] ? (
             <img
-              src={product.images[0]}
-              alt={product.name}
-              className="w-full h-full object-contain bg-white"
+            src={product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-contain bg-white"
             />
           ) : null}
         </div>
@@ -123,38 +135,35 @@ function ProductDetails() {
             Shop: {product.shop || "N/A"}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-2 mt-4">
-            <button
-              className="w-full sm:w-auto bg-green-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-700 transition"
-              onClick={() => alert("Buy Now clicked!")}
+          <div className="flex flex-col gap-2">
+            <Link to='/placeorder'
+              className="w-full sm:w-auto text-center bg-green-600 text-white font-semibold py-3 px-4 rounded-md hover:bg-green-700 transition"
             >
               Buy Now
-            </button>
+            </Link>
             {isInCart ? (
+           
             <button
-              className="w-full sm:w-auto cursor-pointer bg-red-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-red-700 transition"
+              className="w-full sm:w-auto cursor-pointer bg-red-600 text-white font-semibold py-3 px-3 rounded-md hover:bg-red-700 transition"
               onClick={handleRemoveFromCart}
             >
               Remove from cart 
             </button>
+            
           ) : (
+            
             <button
-              className="w-full sm:w-auto cursor-pointer bg-blue-600 text-white font-semibold py-2 px-3 rounded-md hover:bg-blue-700 transition"
+              className="w-full sm:w-auto cursor-pointer bg-blue-600 text-white font-semibold py-3 px-3 rounded-md hover:bg-blue-700 transition"
               onClick={handleAddToCart}
-            >
+              >
               Add to Cart
             </button>
           )}
           </div>
-          <button
-            className="w-full sm:w-auto mt-2 text-sm sm:text-base md:text-lg bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition"
-            onClick={() => navigate(-1)}
-          >
-            Back to Products
-          </button>
+        </div>
         </div>
       </div>
-    </div>
+      </>
   );
 }
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { useSelector } from "react-redux";
+import { LiaShippingFastSolid } from "react-icons/lia";
 
 function SellerHeader() {
     const { currentUser } = useSelector((state) => state.user);
@@ -55,6 +56,12 @@ function SellerHeader() {
                     </div>
 
                     <div className="flex items-center space-x-2 sm:space-x-3 relative" ref={profileRef}>
+                        <Link to="/orderdetails" className="relative cursor-pointer">
+                                          <LiaShippingFastSolid size={30} />
+                                          <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-3 h-3 text-white font-mono text-[10px] leading-tight text-center">
+                                            {/* {shipping.length} */}
+                                          </span>
+                                        </Link>
                         <div className="relative cursor-pointer">
                             <img
                                 src={currentUser.avatar}

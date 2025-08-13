@@ -29,6 +29,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Success from "./pages/PaymentSuccess";
 import Cancel from "./pages/PaymentCancel";
+import OrderDetails from './pages/OrderDetails.jsx'
 
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -57,6 +58,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/placeorder" element={<OrderDetails />} />
 
           <Route path="/success" element={<Success />} />
           <Route path="/cancel" element={<Cancel />} />
