@@ -182,7 +182,7 @@ function Profile() {
             setFormData({
                 username: currentUser.username || "",
                 email: currentUser.email || "",
-                password: "", // Keep empty for security
+                password: "",
                 phoneNumber: currentUser.phoneNumber || "",
                 role: currentUser.role?.role || "user",
                 addressInfo: currentUser.addressInfo?.[0] || {
@@ -230,7 +230,6 @@ function Profile() {
                                     ''
                                 )}
                             </p>
-                            <h2 className="mt-4 text-2xl font-bold font-serif text-green-900">{currentUser.username}</h2>
                             <p className="text-sm italic mt-1 text-gray-500">Member since {new Date(currentUser.createdAt).toLocaleDateString()}</p>
                         </div>
 

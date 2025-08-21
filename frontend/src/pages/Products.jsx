@@ -41,7 +41,7 @@ function ProductsPage() {
   }, [dispatch]);
 
   const goBack = () => {
-    navigate(-1);
+    navigate('/');
   };
 
   const filteredProducts = products

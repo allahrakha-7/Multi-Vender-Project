@@ -18,7 +18,7 @@ function BestDeals() {
       try {
         dispatch(fetchOtherUsersProductsStart());
         const res = await fetch('/api/products/all', {
-          credentials: "include",
+
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch products");

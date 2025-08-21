@@ -33,6 +33,7 @@ import OrderDetails from './pages/OrderDetails.jsx'
 
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import SellerOrderDetails from "./pages/SellerOrderDetails.jsx";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -58,10 +59,11 @@ function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/products" element={<ProductsPage />} />
-          <Route path="/placeorder" element={<OrderDetails />} />
+          <Route path="/place-order" element={<OrderDetails />} />
 
-          <Route path="/success" element={<Success />} />
-          <Route path="/cancel" element={<Cancel />} />
+          <Route path="/order-success" element={<Success />} />
+          <Route path="/order-cancel" element={<Cancel />} />
+          <Route path="/seller-orders" element={<SellerOrderDetails />} />
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/careers" element={<Careers />} />

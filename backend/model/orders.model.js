@@ -1,50 +1,62 @@
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
-    cart:{
-        type: Array,
-        required: true,
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     },
-    shippingAddress:{
-        type: Object,
-        required: true,
+    name: { 
+        type: String, 
+        required: true 
     },
-    user:{
-        type: Object,
-        required: true,
+    email: { 
+        type: String, 
+        required: true 
     },
-    totalPrice:{
-        type: Number,
-        required: true,
+    phoneNumber: { 
+        type: String 
     },
-    status:{
-        type: String,
-        default: "Processing",
+    addressInfo: [
+        {
+            country: String,
+            city: String,
+            address1: String,
+            address2: String,
+            zipCode: String,
+        }
+    ],
+    cart: [
+        {
+            productId: { type: mongoose.Schema.Types.ObjectId, 
+                ref: "Product" 
+            },
+            quantity: { 
+                type: Number, 
+                default: 1 
+            }
+        }
+    ],
+    status: { 
+        type: String, 
+        default: "Processing" 
     },
-    paymentInfo:{
-        id:{
-            type: String,
+    paymentInfo: {
+      id: { 
+        type: String, 
+        default: null 
+    }, 
+      status: { 
+        type: String, 
+        default: "Unpaid" 
+    },
+      type: { 
+        type: String, 
+        enum: ["COD", "Card", "UPI", "PayPal"], 
         },
-        status: {
-            type: String,
-        },
-        type:{
-            type: String,
-        },
     },
-    paidAt:{
-        type: Date,
-        default: Date.now(),
-    },
-    deliveredAt: {
-        type: Date,
-    },
-    createdAt:{
-        type: Date,
-        default: Date.now(),
-    },
-});
+    paidAt: Date,
+    deliveredAt: Date
+}, { timestamps: true });
 
-const Order = mongoose.model('Order', orderSchema);
-
-export default Order;
+export default mongoose.model("Order", orderSchema);

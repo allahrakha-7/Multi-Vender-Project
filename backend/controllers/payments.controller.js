@@ -25,8 +25,8 @@ export const createCheckOutSession = async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `http://localhost:5173/success`,
-      cancel_url: `http://localhost:5173/cancel`,
+      success_url: `http://localhost:5173/order-success`,
+      cancel_url: `http://localhost:5173/order-cancel`,
       metadata: { productId: product._id }, 
     });
 

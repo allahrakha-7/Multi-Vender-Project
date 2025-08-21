@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import userRoutes from './routes/user.route.js';
 import productRoutes from './routes/products.route.js';
 import paymentRoutes from './routes/payments.route.js';
+import orderRoutes from './routes/orders.routes.js';
 import cors from 'cors';
 
 
@@ -43,6 +44,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/order', orderRoutes);
 
 const server = app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');

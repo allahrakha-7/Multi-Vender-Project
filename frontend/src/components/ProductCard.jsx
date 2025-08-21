@@ -78,7 +78,7 @@ function ProductCard({ data }) {
           </div>
         </Link>
         <div className="flex flex-col justify-between sm:flex-row gap-2 mt-4">
-          <Link to='/placeorder'>
+          <Link to='/place-order'>
           <button
             className="w-full sm:w-auto cursor-pointer bg-green-600 text-white font-semibold py-1 px-3 rounded-md hover:bg-green-700 transition"
           >
