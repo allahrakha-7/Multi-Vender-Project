@@ -19,9 +19,6 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use('/test', (req, res) => {
-  res.send('Server is running accurately.');
-})
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
   dotenv.config();
@@ -34,15 +31,19 @@ process.on("uncaughtException", (err) => {
 
 
 mongoose.connect(process.env.MONGO)
-  .then(() => console.log('Connected to MongoDB!'))
-  .catch((err) => {
-    console.log('MongoDB connection error:', err);
-    process.exit(1);
+.then(() => console.log('Connected to MongoDB!'))
+.catch((err) => {
+  console.log('MongoDB connection error:', err);
+  process.exit(1);
 });
 
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use('/test', (req, res) => {
+  res.send('Server is running accurately.');
+})
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
