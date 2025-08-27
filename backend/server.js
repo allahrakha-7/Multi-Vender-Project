@@ -19,6 +19,10 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use('/test', (req, res) => {
+  res.send('Server is running accurately.');
+})
+
 if (process.env.NODE_ENV !== "PRODUCTION") {
   dotenv.config();
 }
