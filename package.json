@@ -1,0 +1,27 @@
+{
+  "name": "multi-vender-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allahrakha-7/Multi-Vender-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/allahrakha-7/Multi-Vender-Project/issues"
+  },
+  "homepage": "https://github.com/allahrakha-7/Multi-Vender-Project#readme",
+  "dependencies": {
+    "@stripe/stripe-js": "^7.9.0",
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "stripe": "^18.5.0"
+  }
+}
