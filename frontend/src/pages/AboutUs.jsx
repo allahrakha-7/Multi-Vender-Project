@@ -42,17 +42,17 @@ const AboutUs = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="text-center bg-white p-6 rounded-lg shadow-md">
                                 <div className="w-24 h-24 mx-auto bg-gray-300 rounded-full mb-4"></div>
-                                <h3 className="text-lg font-medium text-gray-900">Jane Doe</h3>
+                                <h3 className="text-lg font-medium text-gray-900">Allah Rakha</h3>
                                 <p className="text-gray-600">Founder & CEO</p>
                             </div>
                             <div className="text-center bg-white p-6 rounded-lg shadow-md">
                                 <div className="w-24 h-24 mx-auto bg-gray-300 rounded-full mb-4"></div>
-                                <h3 className="text-lg font-medium text-gray-900">John Smith</h3>
+                                <h3 className="text-lg font-medium text-gray-900">Ali Murtaza</h3>
                                 <p className="text-gray-600">Head of Operations</p>
                             </div>
                             <div className="text-center bg-white p-6 rounded-lg shadow-md">
                                 <div className="w-24 h-24 mx-auto bg-gray-300 rounded-full mb-4"></div>
-                                <h3 className="text-lg font-medium text-gray-900">Emily Johnson</h3>
+                                <h3 className="text-lg font-medium text-gray-900">Abdul Ahad</h3>
                                 <p className="text-gray-600">Customer Support Lead</p>
                             </div>
                         </div>
